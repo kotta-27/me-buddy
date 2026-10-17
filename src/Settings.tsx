@@ -12,27 +12,43 @@ type Props = {
 
 export function Settings({ open, cfg, onChange, onClose, onReset }: Props) {
   const ref = useRef<HTMLDialogElement>(null)
+  const intervalRef = useRef<HTMLInputElement>(null)
+  const breakRef = useRef<HTMLInputElement>(null)
   useEffect(() => {
     const d = ref.current
     if (!d) return
-    if (open && !d.open) d.showModal()
+    if (open && !d.open) {
+      if (intervalRef.current) intervalRef.current.value = String(cfg.interval)
+      if (breakRef.current) breakRef.current.value = String(cfg.breakLen)
+      d.showModal()
+    }
     if (!open && d.open) d.close()
   }, [open])
 
-  const num = (k: 'interval' | 'breakLen' | 'eyeSize' | 'eyeGap', min: number) =>
+  // 数値欄は閉じる時にまとめて反映（親が毎秒再描画するので、入力中に値を縛らない）
+  const commit = () => {
+    const n = (el: HTMLInputElement | null, d: number, lo: number, hi: number) => {
+      const v = Number(el?.value)
+      return Number.isFinite(v) && el?.value !== '' ? Math.min(hi, Math.max(lo, v)) : d
+    }
+    const next = { ...cfg, interval: n(intervalRef.current, cfg.interval, 5, 180), breakLen: n(breakRef.current, cfg.breakLen, 1, 60) }
+    if (next.interval !== cfg.interval || next.breakLen !== cfg.breakLen) onChange(next)
+    onClose()
+  }
+  const num = (k: 'eyeSize' | 'eyeGap', min: number) =>
     (e: Event) => onChange({ ...cfg, [k]: Math.max(min, Number((e.target as HTMLInputElement).value) || min) })
   const bool = (k: 'chatter' | 'wake') =>
     (e: Event) => onChange({ ...cfg, [k]: (e.target as HTMLInputElement).checked })
 
   return (
-    <dialog ref={ref} onClose={onClose}>
+    <dialog ref={ref} onClose={commit}>
       <form method="dialog">
         <h2>設定</h2>
         <label>声をかける間隔（分）
-          <input id="s-interval" type="number" min={5} max={180} step={5} value={cfg.interval} onChange={num('interval', 5)} />
+          <input id="s-interval" ref={intervalRef} type="number" inputMode="numeric" min={5} max={180} step={5} />
         </label>
         <label>休憩の長さ（分）
-          <input id="s-break" type="number" min={1} max={60} step={1} value={cfg.breakLen} onChange={num('breakLen', 1)} />
+          <input id="s-break" ref={breakRef} type="number" inputMode="numeric" min={1} max={60} step={1} />
         </label>
         <label>目の大きさ
           <input id="s-size" type="range" min={50} max={160} step={5} value={cfg.eyeSize} onInput={num('eyeSize', 50)} />
