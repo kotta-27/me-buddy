@@ -87,9 +87,10 @@ export const welcome: Performance = [
   { lid: 0, shape: 'happy', t: 120, hold: 1500 },
   reset(300),
 ]
+// じとっ：目ごと縦に潰して細める（楕円のまま）
 export const ticklish: Performance = [
-  { lidb: .5, px: 0, py: .2, t: 200, hold: 500 },
-  { lidb: .5, px: 0, py: .2, text: 'くすぐったい', t: 0, hold: 1300 },
+  { sy: .42, px: 0, py: 0, t: 200, hold: 500 },
+  { sy: .42, px: 0, py: 0, text: 'くすぐったい', t: 0, hold: 1300 },
   reset(300),
 ]
 export const drowsyHold: Performance = [
