@@ -23,6 +23,8 @@ export type Pose = {
 }
 export type Performance = Pose[]
 export type Base = { lid: number; shape: 'idle' | 'happy' }
+/** 「閉じた目」。完全に隠さず、下にひと筋残す */
+export const CLOSED = 0.93
 
 const R = { lid: 0, lidb: 0, px: 0, py: 0, ps: 1, sx: 1, sy: 1, shape: 'idle', text: null } as const
 const reset = (t = 400, hold = 300): Pose => ({ ...R, t, hold })
@@ -63,8 +65,8 @@ export const spaceOut: Performance = [
   reset(1000),
 ]
 export const rubEyes: Performance = [
-  { lid: 1, sy: .92, t: 150, hold: 100 },
-  ...jitter(6, .05, 'sx', 60).map((p) => ({ ...p, lid: 1, sy: .92 })),
+  { lid: CLOSED, sy: .92, t: 150, hold: 100 },
+  ...jitter(6, .05, 'sx', 60).map((p) => ({ ...p, lid: CLOSED, sy: .92 })),
   { lid: 0, sy: 1, sx: 1, t: 250, hold: 600 },
   reset(),
 ]
@@ -81,7 +83,7 @@ export const stretch: Performance = [
 
 // ---- 10〜14: ユーザーの行動に反応 ----
 export const welcome: Performance = [
-  { lid: 1, t: 0, hold: 60 },
+  { lid: CLOSED, t: 0, hold: 60 },
   { lid: 0, shape: 'happy', t: 120, hold: 1500 },
   reset(300),
 ]
@@ -121,16 +123,16 @@ export const nod: Performance = [
   reset(250, 0),
 ]
 export const sleepTalk: Performance = [
-  { lid: 1, text: '…ん', t: 0, hold: 1200 },
-  { lid: 1, text: null, t: 0, hold: 0 },
+  { lid: CLOSED, text: '…ん', t: 0, hold: 1200 },
+  { lid: CLOSED, text: null, t: 0, hold: 0 },
 ]
 export const wakeOneEye: Performance = [
-  { lid: 1, t: 0, hold: 100 },
-  { lidL: 1, lidR: 0, t: 200, hold: 450 },
+  { lid: CLOSED, t: 0, hold: 100 },
+  { lidL: CLOSED, lidR: 0, t: 200, hold: 450 },
   { lidL: 0, lidR: 0, t: 200, hold: 300 },
 ]
 export const sleepyBlink: Performance = [
-  { lid: 1, t: 260, hold: 180 },
+  { lid: CLOSED, t: 260, hold: 180 },
   { lid: 0, t: 320, hold: 0 },
 ]
 

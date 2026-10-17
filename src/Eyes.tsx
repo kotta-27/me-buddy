@@ -23,6 +23,13 @@ type Props = {
   onPoke?: () => void
 }
 
+/** 笑い目「^」。線幅一定、端丸め。ため息は 180° 回して「∪」 */
+const Arc = () => (
+  <svg class="arc" viewBox="0 0 100 60" aria-hidden="true">
+    <path d="M12 48 Q50 2 88 48" fill="none" stroke="currentColor" stroke-width="12" stroke-linecap="round" />
+  </svg>
+)
+
 const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms))
 
 /** 黒背景に目だけ。まばたき・視線の泳ぎ・ゆらぎ・指追い・演技。 */
@@ -55,7 +62,7 @@ export function Eyes({ mood, eyeSize, demo, onPoke }: Props) {
   }
   const base = (): Pose => {
     const m = moodRef.current
-    return { lid: m === 'closed' ? 1 : m === 'sleepy' ? .45 : 0, lidb: 0, px: 0, py: 0, ps: 1, sx: 1, sy: 1, shape: m === 'happy' ? 'happy' : 'idle', text: null, t: 400, hold: 0 }
+    return { lid: m === 'closed' ? B.CLOSED : m === 'sleepy' ? .45 : 0, lidb: 0, px: 0, py: 0, ps: 1, sx: 1, sy: 1, shape: m === 'happy' ? 'happy' : 'idle', text: null, t: 400, hold: 0 }
   }
 
   // ---- 演目再生 ----
@@ -74,7 +81,7 @@ export function Eyes({ mood, eyeSize, demo, onPoke }: Props) {
   const busy = () => perf.current !== null
 
   // mood が変わったら演技を止めて基本姿勢へ
-  useEffect(() => { cancel() }, [mood])
+  useEffect(() => { perf.current = null; set(base()) }, [mood])
 
   // App からの合図
   useEffect(() => {
@@ -212,8 +219,8 @@ export function Eyes({ mood, eyeSize, demo, onPoke }: Props) {
   return (
     <div ref={root} class={`eyes ${mood}`} aria-hidden="true" onPointerDown={onDown} onPointerUp={onUp} onPointerCancel={onUp} onPointerLeave={onUp}>
       <div ref={text} class="mumble"></div>
-      <div class="eye"><div class="pupil" /><div class="lid" /><div class="lidb" /></div>
-      <div class="eye"><div class="pupil" /><div class="lid" /><div class="lidb" /></div>
+      <div class="eye"><div class="pupil" /><Arc /></div>
+      <div class="eye"><div class="pupil" /><Arc /></div>
     </div>
   )
 }

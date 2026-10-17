@@ -50,32 +50,30 @@ body {
   overflow: hidden;
   transform-origin: center;
   transform: scale(var(--sx), var(--sy));
-  transition: transform var(--t) ease, height .4s ease, border-radius .4s ease;
+  /* まぶたは楕円そのものを上下から削る（板を重ねると縁がにじむ） */
+  clip-path: inset(calc(var(--lidL) * 100%) 0 calc(var(--lidb) * 100%) 0);
+  transition: transform var(--t) ease, clip-path var(--t) ease, background .15s ease;
 }
+.eye:last-child { clip-path: inset(calc(var(--lidR) * 100%) 0 calc(var(--lidb) * 100%) 0); }
 .pupil {
   position: absolute; left: 30%; top: 35%; width: 40%; height: 35%;
   border-radius: 50%; background: var(--bg);
   transform: translate(calc(var(--px) * var(--eye-w) * .28), calc(var(--py) * var(--eye-h) * .25)) scale(var(--ps));
   transition: transform var(--t) cubic-bezier(.2, .8, .2, 1);
+  pointer-events: none;
 }
-.lid, .lidb {
-  position: absolute; inset: 0; background: var(--bg);
-  transition: transform var(--t) ease;
-}
-.lid { transform: translateY(calc(-100% + var(--lidL) * 100%)); }
-.eye:last-child .lid { transform: translateY(calc(-100% + var(--lidR) * 100%)); }
-.lidb { transform: translateY(calc(100% - var(--lidb) * 100%)); }
 .eyes.blink .eye { transform: scale(var(--sx), .06); transition: transform .12s ease; }
 .eyes.wink .eye:last-child { transform: scale(var(--sx), .06); transition: transform .12s ease; }
-.eyes.shape-happy .eye, .eyes.shape-sad .eye {
-  height: calc(var(--eye-h) * .62);
-  background: transparent;
-  box-sizing: border-box;
+.eyes.shape-happy .eye, .eyes.shape-sad .eye { background: transparent; overflow: visible; clip-path: none; }
+.eyes.shape-happy .pupil, .eyes.shape-sad .pupil { visibility: hidden; }
+.arc {
+  position: absolute; left: 0; top: 50%; width: 100%; height: auto;
+  transform: translateY(-50%); opacity: 0; transition: opacity .15s ease;
+  pointer-events: none;
 }
-.eyes.shape-happy .eye { border-radius: 50% 50% 0 0 / 100% 100% 0 0; border-top: 14px solid var(--fg); }
-.eyes.shape-sad .eye { border-radius: 0 0 50% 50% / 0 0 100% 100%; border-bottom: 14px solid var(--fg); }
-.eyes.shape-happy .pupil, .eyes.shape-happy .lid, .eyes.shape-happy .lidb,
-.eyes.shape-sad .pupil, .eyes.shape-sad .lid, .eyes.shape-sad .lidb { opacity: 0; }
+.eyes.shape-happy .arc, .eyes.shape-sad .arc { opacity: 1; }
+.eyes.shape-sad .arc { transform: translateY(-50%) rotate(180deg); }
+
 .mumble {
   position: absolute; left: 50%; top: -2.4em; transform: translateX(-50%);
   white-space: nowrap; font-size: 15px; letter-spacing: .2em; color: var(--dim);
@@ -145,4 +143,4 @@ dialog select {
 .row button { height: 40px; font-size: 13px; }
 .hint { font-size: 11px; color: var(--mute); letter-spacing: .1em; text-align: center; margin: 0; }
 
-@media (prefers-reduced-motion: reduce) { .eye, .pupil, .lid, .lidb { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .eye, .pupil, .arc { transition: none; } }
