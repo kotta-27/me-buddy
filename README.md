@@ -70,6 +70,17 @@
 2. 「ホーム画面に追加」すると全画面・横向きで起動
 3. 「はじめる」
 
+## バージョン
+
+設定画面の右上に `v0.4.0` のように出る。更新が反映されたか確認するのに使う。履歴は [CHANGELOG.md](CHANGELOG.md)。
+
+リリース手順:
+
+```sh
+npm run release -- minor "しぐさを追加"   # patch | minor | major
+git push && git push --tags
+```
+
 ## 開発
 
 Vite + Preact + TypeScript。依存は Preact と MediaPipe（顔モード時だけ遅延ロード）。

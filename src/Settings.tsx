@@ -43,7 +43,7 @@ export function Settings({ open, cfg, onChange, onClose, onReset }: Props) {
   return (
     <dialog ref={ref} onClose={commit}>
       <form method="dialog">
-        <h2>設定</h2>
+        <h2>設定 <span class="ver">v{__APP_VERSION__}</span></h2>
         <label>声をかける間隔（分）
           <input id="s-interval" ref={intervalRef} type="number" inputMode="numeric" min={5} max={180} step={5} />
         </label>

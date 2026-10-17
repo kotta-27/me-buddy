@@ -124,7 +124,8 @@ dialog {
   max-height: calc(100vh - 32px); overflow: auto; box-sizing: border-box;
 }
 dialog::backdrop { background: rgba(0, 0, 0, .7); }
-dialog h2 { margin: 0 0 14px; font-size: 15px; font-weight: 500; letter-spacing: .2em; color: var(--dim); }
+dialog h2 { margin: 0 0 14px; font-size: 15px; font-weight: 500; letter-spacing: .2em; color: var(--dim); display: flex; justify-content: space-between; align-items: baseline; }
+.ver { font-size: 11px; letter-spacing: .1em; color: var(--mute); font-variant-numeric: tabular-nums; }
 dialog form { display: flex; flex-direction: column; gap: 14px; }
 dialog label { display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--dim); }
 dialog label.inline { flex-direction: row; align-items: center; gap: 10px; }
