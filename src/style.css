@@ -36,7 +36,11 @@ body {
 @media (max-height: 420px) { .stage { gap: 18px; } }
 
 /* eyes */
-.eyes { display: flex; gap: var(--eye-gap); touch-action: none; }
+.eyes {
+  position: relative;
+  display: flex; gap: var(--eye-gap); touch-action: none;
+  --t: 400ms; --lidL: 0; --lidR: 0; --lidb: 0; --px: 0; --py: 0; --ps: 1; --sx: 1; --sy: 1;
+}
 .eye {
   position: relative;
   width: var(--eye-w);
@@ -45,29 +49,39 @@ body {
   background: var(--fg);
   overflow: hidden;
   transform-origin: center;
-  transition: transform .12s ease, height .4s ease, border-radius .4s ease;
+  transform: scale(var(--sx), var(--sy));
+  transition: transform var(--t) ease, height .4s ease, border-radius .4s ease;
 }
 .pupil {
   position: absolute; left: 30%; top: 35%; width: 40%; height: 35%;
   border-radius: 50%; background: var(--bg);
-  transition: transform .5s cubic-bezier(.2, .8, .2, 1);
+  transform: translate(calc(var(--px) * var(--eye-w) * .28), calc(var(--py) * var(--eye-h) * .25)) scale(var(--ps));
+  transition: transform var(--t) cubic-bezier(.2, .8, .2, 1);
 }
-.lid {
+.lid, .lidb {
   position: absolute; inset: 0; background: var(--bg);
-  transform: translateY(-100%);
-  transition: transform .5s ease;
+  transition: transform var(--t) ease;
 }
-.eyes.sleepy .lid { transform: translateY(-55%); }
-.eyes.blink .eye, .eyes.closed .eye { transform: scaleY(.06); }
-.eyes.wink .eye:last-child { transform: scaleY(.06); }
-.eyes.happy .eye {
+.lid { transform: translateY(calc(-100% + var(--lidL) * 100%)); }
+.eye:last-child .lid { transform: translateY(calc(-100% + var(--lidR) * 100%)); }
+.lidb { transform: translateY(calc(100% - var(--lidb) * 100%)); }
+.eyes.blink .eye { transform: scale(var(--sx), .06); transition: transform .12s ease; }
+.eyes.wink .eye:last-child { transform: scale(var(--sx), .06); transition: transform .12s ease; }
+.eyes.shape-happy .eye, .eyes.shape-sad .eye {
   height: calc(var(--eye-h) * .62);
-  border-radius: 50% 50% 0 0 / 100% 100% 0 0;
   background: transparent;
-  border-top: 14px solid var(--fg);
   box-sizing: border-box;
 }
-.eyes.happy .pupil, .eyes.happy .lid, .eyes.closed .pupil { opacity: 0; }
+.eyes.shape-happy .eye { border-radius: 50% 50% 0 0 / 100% 100% 0 0; border-top: 14px solid var(--fg); }
+.eyes.shape-sad .eye { border-radius: 0 0 50% 50% / 0 0 100% 100%; border-bottom: 14px solid var(--fg); }
+.eyes.shape-happy .pupil, .eyes.shape-happy .lid, .eyes.shape-happy .lidb,
+.eyes.shape-sad .pupil, .eyes.shape-sad .lid, .eyes.shape-sad .lidb { opacity: 0; }
+.mumble {
+  position: absolute; left: 50%; top: -2.4em; transform: translateX(-50%);
+  white-space: nowrap; font-size: 15px; letter-spacing: .2em; color: var(--dim);
+  opacity: 0; transition: opacity .3s ease;
+}
+.mumble.on { opacity: 1; }
 
 /* text + actions */
 .line {
@@ -125,4 +139,4 @@ dialog input[type=range] { accent-color: var(--fg); }
 .row button { height: 40px; font-size: 13px; }
 .hint { font-size: 11px; color: var(--mute); letter-spacing: .1em; text-align: center; margin: 0; }
 
-@media (prefers-reduced-motion: reduce) { .eye, .pupil, .lid { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .eye, .pupil, .lid, .lidb { transition: none; } }

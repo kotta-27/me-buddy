@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'preact/hooks'
-import { Eyes, type Mood } from './Eyes'
+import { Eyes, play, type Mood } from './Eyes'
+import { isMorning } from './behaviors'
 import { Settings } from './Settings'
 import * as L from './lines'
 import { loadConfig, loadTotal, saveConfig, saveTotal, today, type Config, type Total } from './store'
@@ -17,6 +18,7 @@ const fmtH = (s: number) => {
   return h ? `${h}時間${m}分` : `${m}分`
 }
 const min = (n: number) => n * 60_000
+const demo = new URLSearchParams(location.search).has('demo')
 
 export function App() {
   const [cfg, setCfg] = useState<Config>(loadConfig)
@@ -31,6 +33,7 @@ export function App() {
   const breakEnd = useRef(0)
   const nextNudge = useRef(0)
   const nextChatter = useRef(0)
+  const nextNod = useRef(0)
   const talkTimer = useRef(0)
   const lock = useRef<WakeLockSentinel | null>(null)
 
@@ -63,7 +66,11 @@ export function App() {
     try { lock.current = await navigator.wakeLock.request('screen') } catch { /* denied */ }
   }
   useEffect(() => {
-    const onVis = () => { if (document.visibilityState === 'visible' && mode !== 'off') wake() }
+    const onVis = () => {
+      if (document.visibilityState !== 'visible' || mode === 'off') return
+      wake()
+      if (mode === 'focus') play('welcome')
+    }
     document.addEventListener('visibilitychange', onVis)
     return () => document.removeEventListener('visibilitychange', onVis)
   }, [mode, cfg.wake])
@@ -80,9 +87,15 @@ export function App() {
     startAt.current = Date.now()
     nextNudge.current = startAt.current + min(cfg.interval)
     scheduleChatter()
+    nextNod.current = startAt.current + min(25)
     setMode('focus'); setPhase('quiet')
     say(L.back(), { happy: true, ms: 2500 })
-    wake(); fullscreen()
+    if (isMorning()) setTimeout(() => play('yawn'), 3000)
+    wake(); fullscreen(); motionPermission()
+  }
+  const motionPermission = () => {
+    const D = DeviceMotionEvent as unknown as { requestPermission?: () => Promise<string> }
+    D.requestPermission?.().catch(() => {})
   }
   const snooze = () => {
     nextNudge.current = Date.now() + min(5)
@@ -96,7 +109,7 @@ export function App() {
     setMode('break'); setPhase('quiet')
     say(L.breakStart(), { ms: 2000 })
   }
-  const resume = () => start()
+  const resume = () => { play('wakeOneEye'); setTimeout(start, 900) }
   const stop = () => {
     const t = { day: today(), sec: total.sec + elapsed }
     setTotal(t); saveTotal(t)
@@ -109,6 +122,7 @@ export function App() {
     if (mode === 'focus' && phase === 'quiet') {
       if (now >= nextNudge.current) { setPhase('nudge'); say(L.nudge(Math.round(elapsed / 60)), { happy: true, hold: true }) }
       else if (cfg.chatter && now >= nextChatter.current) { say(L.chatter()); scheduleChatter() }
+      if (now >= nextNod.current) { nextNod.current = now + min(25); play('nod') }
     }
     if (mode === 'break' && phase === 'quiet' && breakLeft <= 0) {
       setPhase('breakOver'); say(L.breakEnd(), { happy: true, hold: true })
@@ -129,6 +143,7 @@ export function App() {
       <Eyes
         mood={mood}
         eyeSize={cfg.eyeSize}
+        demo={demo}
         onPoke={() => { if (mode === 'focus' && phase === 'quiet') say(L.poke(), { ms: 1800 }) }}
       />
       <p class={`line ${line ? 'on' : ''}`} role="status" aria-live="polite">{line?.text ?? ''}</p>
