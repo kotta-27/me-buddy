@@ -30,12 +30,31 @@ const Arc = () => (
   </svg>
 )
 
+/** 雲の吹き出し。円を重ねて外周だけ線を残す */
+const Cloud = () => {
+  const cs: [number, number, number][] = [[45, 58, 30], [76, 40, 32], [110, 46, 30], [132, 68, 24], [102, 84, 28], [66, 88, 26]]
+  return (
+    <svg viewBox="0 0 160 130" aria-hidden="true">
+      <g fill="#000" stroke="currentColor" stroke-width="5">
+        {cs.map(([x, y, r]) => <circle cx={x} cy={y} r={r} />)}
+      </g>
+      <g fill="#000">
+        {cs.map(([x, y, r]) => <circle cx={x} cy={y} r={r - 2.5} />)}
+      </g>
+      <circle cx="30" cy="110" r="7" fill="#000" stroke="currentColor" stroke-width="5" />
+      <circle cx="14" cy="123" r="4" fill="#000" stroke="currentColor" stroke-width="4" />
+      <text x="88" y="70" text-anchor="middle" fill="currentColor" font-size="34" font-family="inherit" font-weight="500" letter-spacing="1">…</text>
+    </svg>
+  )
+}
+
 const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms))
 
 /** 黒背景に目だけ。まばたき・視線の泳ぎ・ゆらぎ・指追い・演技。 */
 export function Eyes({ mood, eyeSize, demo, onPoke }: Props) {
   const root = useRef<HTMLDivElement>(null)
   const text = useRef<HTMLDivElement>(null)
+  const bubble = useRef<HTMLDivElement>(null)
   const moodRef = useRef(mood); moodRef.current = mood
   const followUntil = useRef(0)
   const followStart = useRef(0)
@@ -59,10 +78,15 @@ export function Eyes({ mood, eyeSize, demo, onPoke }: Props) {
       text.current.textContent = p.text ?? ''
       text.current.classList.toggle('on', !!p.text)
     }
+    if (p.bubble !== undefined && bubble.current) {
+      const t = bubble.current.querySelector('text')
+      if (t) t.textContent = p.bubble ?? ''
+      bubble.current.classList.toggle('on', !!p.bubble)
+    }
   }
   const base = (): Pose => {
     const m = moodRef.current
-    return { lid: m === 'closed' ? B.CLOSED : m === 'sleepy' ? .45 : 0, lidb: 0, px: 0, py: 0, ps: 1, sx: 1, sy: 1, shape: m === 'happy' ? 'happy' : 'idle', text: null, t: 400, hold: 0 }
+    return { lid: m === 'closed' ? B.CLOSED : m === 'sleepy' ? .45 : 0, lidb: 0, px: 0, py: 0, ps: 1, sx: 1, sy: 1, shape: m === 'happy' ? 'happy' : 'idle', text: null, bubble: null, t: 400, hold: 0 }
   }
 
   // ---- 演目再生 ----
@@ -219,6 +243,7 @@ export function Eyes({ mood, eyeSize, demo, onPoke }: Props) {
   return (
     <div ref={root} class={`eyes ${mood}`} aria-hidden="true" onPointerDown={onDown} onPointerUp={onUp} onPointerCancel={onUp} onPointerLeave={onUp}>
       <div ref={text} class="mumble"></div>
+      <div ref={bubble} class="bubble"><Cloud /></div>
       <div class="eye"><div class="pupil" /><Arc /></div>
       <div class="eye"><div class="pupil" /><Arc /></div>
     </div>

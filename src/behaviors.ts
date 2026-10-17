@@ -9,6 +9,7 @@
  *  sx / sy            目全体の伸縮
  *  shape              'idle' | 'happy' | 'sad'
  *  text               目の上に小さく出す独り言
+ *  bubble             雲の吹き出しの中身（考え中・寝息）。null で消す
  *  t                  このポーズへ移る時間 ms
  *  hold               このポーズで待つ時間 ms
  */
@@ -18,6 +19,7 @@ export type Pose = {
   sx?: number; sy?: number
   shape?: 'idle' | 'happy' | 'sad'
   text?: string | null
+  bubble?: string | null
   t?: number
   hold: number
 }
@@ -26,16 +28,19 @@ export type Base = { lid: number; shape: 'idle' | 'happy' }
 /** 「閉じた目」。完全に隠さず、下にひと筋残す */
 export const CLOSED = 0.93
 
-const R = { lid: 0, lidb: 0, px: 0, py: 0, ps: 1, sx: 1, sy: 1, shape: 'idle', text: null } as const
+const R = { lid: 0, lidb: 0, px: 0, py: 0, ps: 1, sx: 1, sy: 1, shape: 'idle', text: null, bubble: null } as const
 const reset = (t = 400, hold = 300): Pose => ({ ...R, t, hold })
 const jitter = (n: number, amp: number, key: 'px' | 'sx' | 'sy', t = 70): Performance =>
   Array.from({ length: n }, (_, i) => ({ [key]: (i % 2 ? 1 : -1) * amp + (key === 'px' ? 0 : 1), t, hold: t }))
 
 // ---- 1〜9: ひとりで勝手にやる ----
 export const think: Performance = [
-  { px: .6, py: -.7, t: 500, hold: 900 },
-  ...jitter(4, .12, 'px').map((p) => ({ ...p, px: .6 + (p.px ?? 0), py: -.7 })),
-  { px: .6, py: -.7, text: '…？', t: 200, hold: 1400 },
+  { px: .6, py: -.7, t: 500, hold: 600 },
+  { px: .6, py: -.7, bubble: '・', t: 0, hold: 600 },
+  { px: .6, py: -.7, bubble: '・・', t: 0, hold: 600 },
+  { px: .6, py: -.7, bubble: '・・・', t: 0, hold: 700 },
+  ...jitter(4, .12, 'px').map((p) => ({ ...p, px: .6 + (p.px ?? 0), py: -.7, bubble: '・・・' })),
+  { px: .6, py: -.7, bubble: '？', t: 200, hold: 1400 },
   reset(),
 ]
 export const doze: Performance = [
@@ -124,7 +129,10 @@ export const nod: Performance = [
   reset(250, 0),
 ]
 export const sleepTalk: Performance = [
-  { lid: CLOSED, text: '…ん', t: 0, hold: 1200 },
+  { lid: CLOSED, bubble: 'z', t: 0, hold: 900 },
+  { lid: CLOSED, bubble: 'z z', t: 0, hold: 900 },
+  { lid: CLOSED, bubble: 'z z z', t: 0, hold: 1400 },
+  { lid: CLOSED, bubble: null, text: '…ん', t: 0, hold: 1200 },
   { lid: CLOSED, text: null, t: 0, hold: 0 },
 ]
 export const wakeOneEye: Performance = [
