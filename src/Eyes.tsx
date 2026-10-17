@@ -10,7 +10,7 @@ export const play = (name: Cue) => eyesBus.dispatchEvent(new CustomEvent('play',
 const cues = {
   ...B.idleSet,
   welcome: B.welcome, yawn: B.yawn, nod: B.nod, wakeOneEye: B.wakeOneEye, dizzy: B.dizzy,
-  ticklish: B.ticklish, petted: B.petted, sleepTalk: B.sleepTalk,
+  ticklish: B.ticklish, petted: B.petted, sleepTalk: B.sleepTalk, awayWait: B.awayWait,
 } satisfies Record<string, Performance>
 export type Cue = keyof typeof cues
 /** カメラが見つけた顔の方を見る。x,y は -1〜1。null で解除 */

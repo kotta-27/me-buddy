@@ -35,9 +35,9 @@ export function Settings({ open, cfg, onChange, onClose, onReset }: Props) {
     if (next.interval !== cfg.interval || next.breakLen !== cfg.breakLen) onChange(next)
     onClose()
   }
-  const num = (k: 'eyeSize' | 'eyeGap', min: number) =>
+  const num = (k: 'eyeSize' | 'eyeGap' | 'brightness', min: number) =>
     (e: Event) => onChange({ ...cfg, [k]: Math.max(min, Number((e.target as HTMLInputElement).value) || min) })
-  const bool = (k: 'chatter' | 'wake') =>
+  const bool = (k: 'chatter' | 'wake' | 'sound' | 'vibrate') =>
     (e: Event) => onChange({ ...cfg, [k]: (e.target as HTMLInputElement).checked })
 
   return (
@@ -56,7 +56,12 @@ export function Settings({ open, cfg, onChange, onClose, onReset }: Props) {
         <label>目の間隔
           <input id="s-gap" type="range" min={20} max={220} step={5} value={cfg.eyeGap} onInput={num('eyeGap', 20)} />
         </label>
+        <label>目の明るさ
+          <input id="s-bright" type="range" min={40} max={100} step={5} value={cfg.brightness} onInput={num('brightness', 40)} />
+        </label>
         <label class="inline"><input id="s-chatter" type="checkbox" checked={cfg.chatter} onChange={bool('chatter')} />ときどき独り言を言う</label>
+        <label class="inline"><input id="s-sound" type="checkbox" checked={cfg.sound} onChange={bool('sound')} />声をかける時に小さく音を鳴らす</label>
+        <label class="inline"><input id="s-vibrate" type="checkbox" checked={cfg.vibrate} onChange={bool('vibrate')} />声をかける時に震える（Android）</label>
         <label class="inline"><input id="s-wake" type="checkbox" checked={cfg.wake} onChange={bool('wake')} />画面を消さない</label>
         <label>カメラで様子を見る（映像は表示も送信もしない）
           <select id="s-camera" value={cfg.camera} onChange={(e) => onChange({ ...cfg, camera: (e.target as HTMLSelectElement).value as CameraLevel })}>
@@ -65,7 +70,7 @@ export function Settings({ open, cfg, onChange, onClose, onReset }: Props) {
             <option value="face">顔も見る（目で追う・居眠り・あくび）</option>
           </select>
         </label>
-        <p class="hint">目をタップで反応。画面をなでると目で追う。</p>
+        <p class="hint">目をタップで反応。画面をなでると目で追う。PC は Space で開始 / 休憩 / 戻る。</p>
         <div class="row">
           <button type="button" onClick={onReset}>今日の合計をリセット</button>
           <button type="submit" class="primary">閉じる</button>

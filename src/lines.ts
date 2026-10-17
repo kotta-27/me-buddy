@@ -20,4 +20,7 @@ export const asleep = () => pick(['寝てる？', 'おーい。', '目、閉じ�
 export const yawned = () => pick(['つられた。', 'ふぁ…', '眠い？'])
 export const away = () => pick(['どこ行った？', '…', 'いってらっしゃい。'])
 export const distracted = () => pick(['スマホ見てる？', 'こっち。', '戻っておいで。'])
+export const nag = () => pick(['…休まない？', 'ねえ。', '目、しょぼしょぼしない？', 'ちょっとだけ。'])
+export const milestone = (min: number) => pick([`${min}分。すごい。`, `${min}分、やったね。`, `もう${min}分。`])
+export const resumed = () => 'つづきから。'
 export const dark = () => pick(['暗くない？', '電気つけよ。'])

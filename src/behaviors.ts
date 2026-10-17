@@ -61,12 +61,12 @@ export const lookAround: Performance = [
 export const doubleTake: Performance = [
   { px: .7, t: 200, hold: 300 },
   { px: 0, t: 200, hold: 300 },
-  { px: 1, sx: 1.05, sy: 1.08, t: 100, hold: 900 },
+  { px: 1, sx: 1.05, sy: 1.08, bubble: '！', t: 100, hold: 900 },
   reset(),
 ]
 export const spaceOut: Performance = [
   { ps: 1.15, px: .3, py: .2, t: 2500, hold: 2500 },
-  { ps: 1.15, px: -.2, py: .3, t: 3000, hold: 3000 },
+  { ps: 1.15, px: -.2, py: .3, bubble: '…', t: 3000, hold: 3000 },
   reset(1000),
 ]
 export const rubEyes: Performance = [
@@ -121,8 +121,14 @@ export const petted: Performance = [
 // ---- 15〜19: 時間帯・状態 ----
 export const yawn: Performance = [
   { lid: .6, t: 400, hold: 500 },
-  { lid: 0, sy: 1.15, t: 300, hold: 600 },
+  { lid: 0, sy: 1.15, bubble: 'ふぁ', t: 300, hold: 900 },
   reset(300),
+]
+/** 離席中：キョロキョロしてから「…？」 */
+export const awayWait: Performance = [
+  ...lookAround.slice(0, 3),
+  { px: 0, py: -.3, bubble: '…？', t: 300, hold: 3000 },
+  reset(),
 ]
 export const nod: Performance = [
   { py: .6, sy: .9, t: 200, hold: 250 },

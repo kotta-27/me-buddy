@@ -4,7 +4,7 @@ import { Camera, type Sense } from './camera'
 import { isMorning } from './behaviors'
 import { Settings } from './Settings'
 import * as L from './lines'
-import { loadConfig, loadTotal, saveConfig, saveTotal, today, type Config, type Total } from './store'
+import { loadConfig, loadSession, loadTotal, saveConfig, saveSession, saveTotal, today, type Config, type Total } from './store'
 
 type Mode = 'off' | 'focus' | 'break'
 type Phase = 'quiet' | 'nudge' | 'breakOver'
@@ -35,6 +35,10 @@ export function App() {
   const nextNudge = useRef(0)
   const nextChatter = useRef(0)
   const nextNod = useRef(0)
+  const nudgeAt = useRef(0)
+  const nextNag = useRef(0)
+  const milestones = useRef<Set<number>>(new Set())
+  const audio = useRef<AudioContext | null>(null)
   const talkTimer = useRef(0)
   const lock = useRef<WakeLockSentinel | null>(null)
   const cam = useRef<Camera | null>(null)
@@ -48,6 +52,7 @@ export function App() {
     s.setProperty('--eye-w', `${cfg.eyeSize}px`)
     s.setProperty('--eye-h', `${cfg.eyeSize * 1.6}px`)
     s.setProperty('--eye-gap', `${cfg.eyeGap}px`)
+    s.setProperty('--fg', `hsl(0 0% ${cfg.brightness}%)`)
     saveConfig(cfg)
   }, [cfg])
 
@@ -86,6 +91,58 @@ export function App() {
     o.lock?.('landscape').catch(() => {})
   }
 
+  // ---- 知らせる（音・バイブ）----
+  const notify = () => {
+    if (cfg.vibrate) navigator.vibrate?.([30, 60, 30])
+    if (!cfg.sound) return
+    try {
+      const ac = audio.current ?? (audio.current = new AudioContext())
+      const t0 = ac.currentTime
+      for (const [f, at] of [[880, 0], [1175, .18]] as const) {
+        const o = ac.createOscillator(), g = ac.createGain()
+        o.type = 'sine'; o.frequency.value = f
+        g.gain.setValueAtTime(0, t0 + at); g.gain.linearRampToValueAtTime(.08, t0 + at + .02); g.gain.exponentialRampToValueAtTime(.0001, t0 + at + .5)
+        o.connect(g).connect(ac.destination); o.start(t0 + at); o.stop(t0 + at + .55)
+      }
+    } catch { /* no audio */ }
+  }
+
+  // ---- 途中で閉じた分を復元 ----
+  useEffect(() => {
+    const s = loadSession()
+    if (!s) return
+    const gap = Date.now() - s.lastTick
+    if (gap < min(10)) {
+      startAt.current = s.startAt
+      nextNudge.current = Math.max(Date.now() + min(1), s.startAt + min(cfg.interval))
+      nextNod.current = Date.now() + min(25); scheduleChatter()
+      setMode('focus'); setPhase('quiet')
+      say(L.resumed(), { happy: true, ms: 2500 })
+    } else {
+      const t = { day: today(), sec: total.sec + (s.lastTick - s.startAt) / 1000 }
+      setTotal(t); saveTotal(t); saveSession(null)
+    }
+  }, [])
+  useEffect(() => {
+    if (mode !== 'focus') { saveSession(null); return }
+    const id = setInterval(() => saveSession({ startAt: startAt.current, lastTick: Date.now() }), 5000)
+    saveSession({ startAt: startAt.current, lastTick: Date.now() })
+    return () => clearInterval(id)
+  }, [mode])
+
+  // ---- PC キー ----
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.code !== 'Space' || open || (e.target as Element).closest('input, select, button')) return
+      e.preventDefault()
+      if (mode === 'off') start()
+      else if (mode === 'focus' && phase === 'nudge') startBreak()
+      else if (mode === 'break') resume()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  })
+
   // ---- camera ----
   const camera = () => {
     if (!cam.current) {
@@ -103,7 +160,7 @@ export function App() {
     const v = seen.current, now = Date.now()
     setDark(s.dark)
     // 離席 / 帰席
-    if (v.present && !s.present) { v.present = false; say(L.away(), { ms: 2500 }); play('lookAround') }
+    if (v.present && !s.present) { v.present = false; say(L.away(), { ms: 2500 }); play('awayWait') }
     else if (!v.present && s.present) { v.present = true; play('welcome') }
     if (s.dark && now - v.lastDark > min(10)) { v.lastDark = now; say(L.dark()) }
     if (s.face) lookAt(s.face)
@@ -125,6 +182,8 @@ export function App() {
     nextNudge.current = startAt.current + min(cfg.interval)
     scheduleChatter()
     nextNod.current = startAt.current + min(25)
+    milestones.current.clear()
+    if (cfg.sound && !audio.current) { try { audio.current = new AudioContext() } catch { /* no audio */ } }
     setMode('focus'); setPhase('quiet')
     say(L.back(), { happy: true, ms: 2500 })
     if (isMorning()) setTimeout(() => play('yawn'), 3000)
@@ -157,12 +216,16 @@ export function App() {
   // ---- per-tick logic ----
   useEffect(() => {
     if (mode === 'focus' && phase === 'quiet') {
-      if (now >= nextNudge.current) { setPhase('nudge'); say(L.nudge(Math.round(elapsed / 60)), { happy: true, hold: true }) }
+      if (now >= nextNudge.current) { setPhase('nudge'); nudgeAt.current = now; nextNag.current = now + min(3); say(L.nudge(Math.round(elapsed / 60)), { happy: true, hold: true }); notify() }
+      else for (const m of [60, 120, 180]) if (elapsed >= m * 60 && !milestones.current.has(m)) { milestones.current.add(m); say(L.milestone(m), { happy: true, ms: 3000 }) }
       else if (cfg.chatter && now >= nextChatter.current) { say(L.chatter()); scheduleChatter() }
       if (now >= nextNod.current) { nextNod.current = now + min(25); play('nod') }
     }
+    if (mode === 'focus' && phase === 'nudge' && now >= nextNag.current) {
+      nextNag.current = now + min(3); play('sigh'); setTimeout(() => say(L.nag(), { hold: true }), 1500)
+    }
     if (mode === 'break' && phase === 'quiet' && breakLeft <= 0) {
-      setPhase('breakOver'); say(L.breakEnd(), { happy: true, hold: true })
+      setPhase('breakOver'); say(L.breakEnd(), { happy: true, hold: true }); notify()
     }
   }, [now])
 

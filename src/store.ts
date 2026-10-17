@@ -8,10 +8,13 @@ export type Config = {
   eyeGap: number    // 目の間隔 px
   chatter: boolean  // 独り言
   wake: boolean     // Wake Lock
+  sound: boolean    // 声かけ時に音
+  vibrate: boolean  // 声かけ時にバイブ
+  brightness: number // 目の明るさ % (40〜100)
 }
 
 export const defaultConfig: Config = {
-  interval: 50, breakLen: 5, eyeSize: 100, eyeGap: 80, chatter: true, wake: true, camera: 'off',
+  interval: 50, breakLen: 5, eyeSize: 100, eyeGap: 80, chatter: true, wake: true, camera: 'off', sound: false, vibrate: true, brightness: 100,
 }
 
 export type Total = { day: string; sec: number }
@@ -31,3 +34,8 @@ export const loadTotal = (): Total => {
   return t.day === today() ? t : { day: today(), sec: 0 }
 }
 export const saveTotal = (t: Total) => set('total', t)
+
+/** 途中で閉じた時のため、集中中の開始時刻と最後の生存時刻を残す */
+export type Session = { startAt: number; lastTick: number }
+export const loadSession = (): Session | null => { try { const v = localStorage.getItem('session'); return v ? JSON.parse(v) : null } catch { return null } }
+export const saveSession = (s: Session | null) => { try { s ? localStorage.setItem('session', JSON.stringify(s)) : localStorage.removeItem('session') } catch { /* ignore */ } }
