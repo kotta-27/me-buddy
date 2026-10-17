@@ -176,7 +176,10 @@ export function App() {
   useEffect(() => () => cam.current?.stop(), [])
 
   // ---- session ----
-  const scheduleChatter = () => { nextChatter.current = Date.now() + min(8 + Math.random() * 10) }
+  const scheduleChatter = () => {
+    const [lo, hi] = { 1: [15, 30], 2: [8, 18], 3: [3, 7] }[cfg.pace]
+    nextChatter.current = Date.now() + min(lo + Math.random() * (hi - lo))
+  }
   const start = () => {
     startAt.current = Date.now()
     nextNudge.current = startAt.current + min(cfg.interval)
@@ -244,6 +247,7 @@ export function App() {
         mood={mood}
         eyeSize={cfg.eyeSize}
         demo={demo}
+        pace={cfg.pace}
         onPoke={() => { if (mode === 'focus' && phase === 'quiet') say(L.poke(), { ms: 1800 }) }}
       />
       <p class={`line ${line ? 'on' : ''}`} role="status" aria-live="polite">{line?.text ?? ''}</p>

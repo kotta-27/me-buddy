@@ -19,6 +19,7 @@ export const lookAt = (p: { x: number; y: number } | null) => eyesBus.dispatchEv
 type Props = {
   mood: Mood
   eyeSize: number
+  pace?: 1 | 2 | 3         // しぐさの多さ
   demo?: boolean           // 演目の間隔を短くする（確認用）
   onPoke?: () => void
 }
@@ -51,7 +52,8 @@ const Cloud = () => {
 const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms))
 
 /** 黒背景に目だけ。まばたき・視線の泳ぎ・ゆらぎ・指追い・演技。 */
-export function Eyes({ mood, eyeSize, demo, onPoke }: Props) {
+export function Eyes({ mood, eyeSize, pace = 3, demo, onPoke }: Props) {
+  const paceRef = useRef(pace); paceRef.current = pace
   const root = useRef<HTMLDivElement>(null)
   const text = useRef<HTMLDivElement>(null)
   const bubble = useRef<HTMLDivElement>(null)
@@ -148,7 +150,12 @@ export function Eyes({ mood, eyeSize, demo, onPoke }: Props) {
     }
     wander()
 
-    // 待機中の演目（2〜5分に1回。demo は 8〜15秒）
+    // 待機中の演目。多さ: 少なめ 2〜5分 / ふつう 40〜100秒 / 多め 12〜30秒（demo は 6〜12秒）
+    const gap = () => {
+      if (demo) return 6000 + Math.random() * 6000
+      const [lo, hi] = { 1: [120, 300], 2: [40, 100], 3: [12, 30] }[paceRef.current]
+      return (lo + Math.random() * (hi - lo)) * 1000
+    }
     const idle = () => {
       const m = moodRef.current
       if (!busy() && (m === 'idle' || m === 'sleepy') && Date.now() > followUntil.current) {
@@ -157,9 +164,9 @@ export function Eyes({ mood, eyeSize, demo, onPoke }: Props) {
         const seq = name === 'rubEyes' && Math.random() < .5 ? [...B.rubEyes, ...B.doze] : B.idleSet[name]
         perform(seq, true)
       }
-      later(idle, demo ? 8000 + Math.random() * 7000 : (120 + Math.random() * 180) * 1000)
+      later(idle, gap())
     }
-    later(idle, demo ? 3000 : 60_000)
+    later(idle, demo ? 3000 : Math.min(gap(), 20_000))
 
     // 休憩中の寝言
     const mumble = () => {
