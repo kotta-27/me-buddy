@@ -1,0 +1,128 @@
+:root {
+  --bg: #000;
+  --fg: #fff;
+  --mute: #3a3a3a;
+  --dim: #8a8a8a;
+  --line: #2a2a2a;
+  --font: 'Zen Kaku Gothic New', system-ui, -apple-system, sans-serif;
+  --eye-w: 100px;
+  --eye-h: 160px;
+  --eye-gap: 80px;
+  color-scheme: dark;
+}
+html, body, #app { height: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font);
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.stage {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  padding-inline: 16px;
+  box-sizing: border-box;
+}
+@media (max-height: 420px) { .stage { gap: 18px; } }
+
+/* eyes */
+.eyes { display: flex; gap: var(--eye-gap); touch-action: none; }
+.eye {
+  position: relative;
+  width: var(--eye-w);
+  height: var(--eye-h);
+  border-radius: 50%;
+  background: var(--fg);
+  overflow: hidden;
+  transform-origin: center;
+  transition: transform .12s ease, height .4s ease, border-radius .4s ease;
+}
+.pupil {
+  position: absolute; left: 30%; top: 35%; width: 40%; height: 35%;
+  border-radius: 50%; background: var(--bg);
+  transition: transform .5s cubic-bezier(.2, .8, .2, 1);
+}
+.lid {
+  position: absolute; inset: 0; background: var(--bg);
+  transform: translateY(-100%);
+  transition: transform .5s ease;
+}
+.eyes.sleepy .lid { transform: translateY(-55%); }
+.eyes.blink .eye, .eyes.closed .eye { transform: scaleY(.06); }
+.eyes.wink .eye:last-child { transform: scaleY(.06); }
+.eyes.happy .eye {
+  height: calc(var(--eye-h) * .62);
+  border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+  background: transparent;
+  border-top: 14px solid var(--fg);
+  box-sizing: border-box;
+}
+.eyes.happy .pupil, .eyes.happy .lid { opacity: 0; }
+
+/* text + actions */
+.line {
+  margin: 0;
+  min-height: 1.6em;
+  font-size: clamp(16px, 2.6vw, 22px);
+  font-weight: 500;
+  letter-spacing: .06em;
+  text-align: center;
+  text-wrap: balance;
+  opacity: 0;
+  transition: opacity .4s ease;
+}
+.line.on { opacity: 1; }
+.actions { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; min-height: 44px; }
+button {
+  font: inherit; font-size: 14px; height: 44px; padding: 0 22px;
+  border-radius: 22px; border: 1px solid var(--mute);
+  background: transparent; color: var(--dim); cursor: pointer;
+}
+button.primary { background: var(--fg); color: var(--bg); border-color: var(--fg); font-weight: 500; }
+button:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; }
+
+.foot {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  padding: 0 24px calc(14px + env(safe-area-inset-bottom, 0px));
+  display: flex; justify-content: space-between;
+  font-size: 12px; letter-spacing: .3em; color: var(--mute);
+  font-variant-numeric: tabular-nums;
+}
+.gear {
+  position: absolute; top: calc(6px + env(safe-area-inset-top, 0px)); right: 12px;
+  width: 44px; height: 44px; padding: 0; border: 0;
+  color: var(--mute); font-size: 28px; line-height: 1; border-radius: 22px;
+}
+
+/* settings */
+dialog {
+  background: #0a0a0a; color: var(--fg);
+  border: 1px solid var(--line); border-radius: 16px;
+  padding: 20px 22px; width: min(420px, calc(100vw - 32px));
+  max-height: calc(100vh - 32px); overflow: auto; box-sizing: border-box;
+}
+dialog::backdrop { background: rgba(0, 0, 0, .7); }
+dialog h2 { margin: 0 0 14px; font-size: 15px; font-weight: 500; letter-spacing: .2em; color: var(--dim); }
+dialog form { display: flex; flex-direction: column; gap: 14px; }
+dialog label { display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--dim); }
+dialog label.inline { flex-direction: row; align-items: center; gap: 10px; }
+dialog input[type=number] {
+  width: 90px; height: 36px; padding: 0 10px;
+  background: #000; color: var(--fg); border: 1px solid var(--mute); border-radius: 8px; font: inherit;
+}
+dialog input[type=range] { accent-color: var(--fg); }
+.row { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; margin-top: 6px; }
+.row button { height: 40px; font-size: 13px; }
+.hint { font-size: 11px; color: var(--mute); letter-spacing: .1em; text-align: center; margin: 0; }
+
+@media (prefers-reduced-motion: reduce) { .eye, .pupil, .lid { transition: none; } }

@@ -1,0 +1,12 @@
+{
+  "name": "め",
+  "short_name": "め",
+  "description": "黒い画面に目だけの作業相棒",
+  "start_url": "./",
+  "scope": "./",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}
