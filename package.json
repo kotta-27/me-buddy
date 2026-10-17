@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@mediapipe/tasks-vision": "^0.10.21",
     "preact": "^10.29.8"
   },
   "devDependencies": {

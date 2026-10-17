@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'preact/hooks'
 import type { Config } from './store'
+import type { CameraLevel } from './camera'
 
 type Props = {
   open: boolean
@@ -41,6 +42,13 @@ export function Settings({ open, cfg, onChange, onClose, onReset }: Props) {
         </label>
         <label class="inline"><input id="s-chatter" type="checkbox" checked={cfg.chatter} onChange={bool('chatter')} />ときどき独り言を言う</label>
         <label class="inline"><input id="s-wake" type="checkbox" checked={cfg.wake} onChange={bool('wake')} />画面を消さない</label>
+        <label>カメラで様子を見る（映像は表示も送信もしない）
+          <select id="s-camera" value={cfg.camera} onChange={(e) => onChange({ ...cfg, camera: (e.target as HTMLSelectElement).value as CameraLevel })}>
+            <option value="off">使わない</option>
+            <option value="presence">在席と明るさだけ（軽い）</option>
+            <option value="face">顔も見る（目で追う・居眠り・あくび）</option>
+          </select>
+        </label>
         <p class="hint">目をタップで反応。画面をなでると目で追う。</p>
         <div class="row">
           <button type="button" onClick={onReset}>今日の合計をリセット</button>
