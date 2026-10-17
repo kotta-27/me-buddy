@@ -67,7 +67,7 @@ body {
   border-top: 14px solid var(--fg);
   box-sizing: border-box;
 }
-.eyes.happy .pupil, .eyes.happy .lid { opacity: 0; }
+.eyes.happy .pupil, .eyes.happy .lid, .eyes.closed .pupil { opacity: 0; }
 
 /* text + actions */
 .line {
