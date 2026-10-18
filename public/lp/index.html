@@ -15,7 +15,7 @@
 <style>
 /* 黒いアプリと地続き。白い目だけが主役 */
 :root {
-  --bg: #000; --fg: #fff; --dim: #9a9a9a; --mute: #3a3a3a; --line: #1f1f1f; --panel: #0a0a0a;
+  --bg: #000; --fg: #fff; --dim: #b4b4b4; --mute: #5a5a5a; --line: #1f1f1f; --panel: #0a0a0a;
   --font: 'Zen Kaku Gothic New', system-ui, -apple-system, sans-serif;
   color-scheme: dark;
 }
@@ -52,7 +52,7 @@ nav ul a:hover { color: var(--fg); }
 .phone { position: relative; width: 100%; aspect-ratio: 844 / 390; border-radius: 24px; overflow: hidden; background: #000; border: 1px solid var(--line); box-shadow: 0 30px 80px rgba(0,0,0,.6); }
 .phone iframe { position: absolute; left: 0; top: 0; width: 844px; height: 390px; border: 0; background: #000; pointer-events: none; transform-origin: 0 0; }
 .phone .hint { position: absolute; right: 14px; bottom: 10px; font-size: 11px; letter-spacing: .2em; color: var(--mute); }
-.small { font-size: 13px; color: var(--mute); margin-top: 14px; }
+.small { font-size: 14px; color: var(--dim); margin-top: 16px; }
 
 /* steps */
 .steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
