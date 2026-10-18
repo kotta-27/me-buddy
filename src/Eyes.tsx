@@ -10,6 +10,7 @@ export const play = (name: Cue) => eyesBus.dispatchEvent(new CustomEvent('play',
 const cues = {
   ...B.idleSet,
   ...B.bodySet,
+  ...B.smileSet,
   welcome: B.welcome, yawn: B.yawn, nod: B.nod, wakeOneEye: B.wakeOneEye, dizzy: B.dizzy,
   ticklish: B.ticklish, petted: B.petted, sleepTalk: B.sleepTalk, awayWait: B.awayWait, glanceUp: B.glanceUp,
 } satisfies Record<string, Performance>
@@ -52,6 +53,18 @@ const Cloud = () => {
   )
 }
 
+/** キラキラ（4つ角の星） */
+const Star = () => (
+  <svg class="star" viewBox="0 0 100 100" aria-hidden="true">
+    <path d="M50 4 C54 34 66 46 96 50 C66 54 54 66 50 96 C46 66 34 54 4 50 C34 46 46 34 50 4 Z" fill="currentColor" />
+  </svg>
+)
+/** ハート */
+const Heart = () => (
+  <svg class="heart" viewBox="0 0 100 100" aria-hidden="true">
+    <path d="M50 90 C20 66 6 50 6 32 C6 18 17 8 30 8 C39 8 46 13 50 20 C54 13 61 8 70 8 C83 8 94 18 94 32 C94 50 80 66 50 90 Z" fill="currentColor" />
+  </svg>
+)
 /** ×目 */
 const Cross = () => (
   <svg class="cross" viewBox="0 0 100 100" aria-hidden="true">
@@ -106,7 +119,7 @@ export function Eyes({ mood, eyeSize, pace = 3, demo, onPoke, onApproach, onBuzz
     if (p.tiltL !== undefined) el.style.setProperty('--tiltL', `${p.tiltL}deg`)
     if (p.tiltR !== undefined) el.style.setProperty('--tiltR', `${p.tiltR}deg`)
     if (p.gap !== undefined) el.style.setProperty('--gapk', String(p.gap))
-    if (p.shape) { el.classList.toggle('shape-happy', p.shape === 'happy'); el.classList.toggle('shape-sad', p.shape === 'sad'); el.classList.toggle('shape-cross', p.shape === 'cross') }
+    if (p.shape) for (const k of ['happy', 'sad', 'cross', 'smirk', 'sparkle', 'heart']) el.classList.toggle(`shape-${k}`, p.shape === k)
     if (p.swirl !== undefined) el.classList.toggle('swirl', p.swirl)
     if (p.spin !== undefined) el.classList.toggle('spin', p.spin)
     if (p.text !== undefined && text.current) {
@@ -374,8 +387,8 @@ export function Eyes({ mood, eyeSize, pace = 3, demo, onPoke, onApproach, onBuzz
       <div ref={bubble} class="bubble"><Cloud /></div>
       <Swirl />
       <div ref={pair} class="pair">
-        <div class="eye"><div class="pupil" /><Arc /><Cross /></div>
-        <div class="eye"><div class="pupil" /><Arc /><Cross /></div>
+        <div class="eye"><div class="pupil" /><Arc /><Cross /><Star /><Heart /></div>
+        <div class="eye"><div class="pupil" /><Arc /><Cross /><Star /><Heart /></div>
       </div>
     </div>
   )

@@ -11,7 +11,7 @@
  *  rot                ペアの回転 deg（首かしげ）
  *  gap                目と目の間隔の倍率（1 が通常。小さいとコンパクト）
  *  tiltL / tiltR      左右それぞれの目の傾き deg（眉の代わり。内側に倒すと怒り、外側で悲しみ）
- *  shape              'idle' | 'happy' | 'sad' | 'cross'（×目）
+ *  shape              'idle' | 'happy' | 'sad' | 'cross'（×目） | 'smirk'（左だけ弧） | 'sparkle'（キラキラ） | 'heart'
  *  swirl              頭上の渦巻き
  *  spin               瞳が円を描いて回る（CSS アニメ）
  *  text               目の上に小さく出す独り言
@@ -25,7 +25,7 @@ export type Pose = {
   sx?: number; sy?: number
   ox?: number; oy?: number; rot?: number
   tiltL?: number; tiltR?: number; gap?: number
-  shape?: 'idle' | 'happy' | 'sad' | 'cross'
+  shape?: 'idle' | 'happy' | 'sad' | 'cross' | 'smirk' | 'sparkle' | 'heart'
   swirl?: boolean
   spin?: boolean
   text?: string | null
@@ -248,6 +248,103 @@ export const peek: Performance = [
   { oy: 0, sx: 1, sy: 1, px: 0, py: 0, t: 400, hold: 300 },
   reset(),
 ]
+// ---- 笑い方いろいろ（候補）----
+const H = { shape: 'happy' as const }
+/** 満面：弧が横に広がって「♪」 */
+export const grin: Performance = [
+  { ...H, sx: 1.18, sy: 1.05, bubble: '♪', t: 200, hold: 2200 },
+  reset(300),
+]
+/** くすくす：小刻みに揺れながら「ふふ」 */
+export const giggle: Performance = [
+  { ...H, text: 'ふふ', t: 150, hold: 100 },
+  ...Array.from({ length: 8 }, (_, i) => ({ ...H, oy: i % 2 ? 3 : -3, sx: i % 2 ? 1.02 : .98, text: 'ふふ', t: 90, hold: 10 })),
+  { ...H, oy: 0, sx: 1, text: null, t: 200, hold: 900 },
+  reset(300),
+]
+/** にこにこ：笑ったままゆらゆら */
+export const sway: Performance = [
+  { ...H, rot: 6, t: 500, hold: 300 },
+  { ...H, rot: -6, t: 900, hold: 300 },
+  { ...H, rot: 6, t: 900, hold: 300 },
+  { ...H, rot: 0, t: 600, hold: 400 },
+  reset(300),
+]
+/** 照れ笑い：笑って縮こまってから、目をそらす */
+export const shy: Performance = [
+  { ...H, oy: 10, sx: .92, sy: .9, rot: 5, t: 300, hold: 1200 },
+  { shape: 'idle', oy: 6, sx: .96, sy: .96, rot: 3, px: -.8, py: .5, t: 350, hold: 1100 },
+  { px: -.8, py: .5, t: 200, hold: 300 },
+  reset(400),
+]
+/** にやり：左は弧、右は半目で横を見る */
+export const smirk: Performance = [
+  { shape: 'smirk', lidR: .45, px: .6, py: .1, t: 250, hold: 2000 },
+  reset(300),
+]
+/** ウインク笑い：左は弧、右はぱっちり */
+export const winkSmile: Performance = [
+  { shape: 'smirk', lidR: 0, sx: 1.05, px: 0, py: 0, t: 150, hold: 1600 },
+  reset(300),
+]
+/** キラキラ：目が星になって脈打つ */
+export const sparkle: Performance = [
+  { shape: 'sparkle', sx: 1.05, sy: 1.05, t: 150, hold: 300 },
+  { shape: 'sparkle', sx: .95, sy: .95, t: 300, hold: 200 },
+  { shape: 'sparkle', sx: 1.08, sy: 1.08, t: 300, hold: 200 },
+  { shape: 'sparkle', sx: 1, sy: 1, t: 300, hold: 900 },
+  reset(300),
+]
+/** ハート目：ハートになって跳ねる */
+export const hearts: Performance = [
+  { shape: 'heart', oy: -14, sx: 1.08, sy: 1.08, t: 200, hold: 200 },
+  { shape: 'heart', oy: 0, sx: 1, sy: 1, t: 250, hold: 200 },
+  { shape: 'heart', oy: -8, sx: 1.04, sy: 1.04, t: 200, hold: 200 },
+  { shape: 'heart', oy: 0, sx: 1, sy: 1, t: 250, hold: 1000 },
+  reset(300),
+]
+/** ドヤ：両目半分、外側に少し傾けて「♪」 */
+export const smug: Performance = [
+  { lid: .45, tiltL: -6, tiltR: 6, px: 0, py: 0, bubble: '♪', t: 300, hold: 2200 },
+  reset(300),
+]
+/** 笑い転げ：大きく揺れて跳ねる */
+export const rolling: Performance = [
+  { ...H, rot: -14, oy: -10, t: 220, hold: 60 },
+  { ...H, rot: 14, oy: 6, t: 260, hold: 60 },
+  { ...H, rot: -12, oy: -8, t: 260, hold: 60 },
+  { ...H, rot: 12, oy: 4, t: 260, hold: 60 },
+  { ...H, rot: 0, oy: 0, t: 300, hold: 700 },
+  reset(300),
+]
+/** ぷっ：吹き出して震える */
+export const snort: Performance = [
+  { ...H, sx: 1.1, sy: .9, t: 80, hold: 60 },
+  ...jitter(8, .04, 'sx', 45).map((p) => ({ ...p, ...H })),
+  { ...H, sx: 1, sy: 1, t: 150, hold: 800 },
+  reset(300),
+]
+
+// ---- 集中・感情（候補）----
+/** 集中：少し細めて瞳が小さく中央、ほんの少し前のめり。まばたきしない */
+export const focus: Performance = [
+  { sy: .8, ps: .8, px: 0, py: 0, sx: 1.04, t: 400, hold: 3200 },
+  reset(500),
+]
+/** やる気：内側に少し傾けて細め「…！」 */
+export const determined: Performance = [
+  { tiltL: 8, tiltR: -8, sy: .85, ps: .85, px: 0, py: 0, t: 250, hold: 600 },
+  { tiltL: 8, tiltR: -8, sy: .85, ps: .85, px: 0, py: 0, bubble: '…！', t: 0, hold: 1600 },
+  reset(300),
+]
+/** 感心：見開いて瞳が大きく「ほー」 */
+export const impressed: Performance = [
+  { sx: 1.1, sy: 1.1, ps: 1.3, px: 0, py: -.1, t: 200, hold: 300 },
+  { sx: 1.1, sy: 1.1, ps: 1.3, px: 0, py: -.1, text: 'ほー', t: 0, hold: 1600 },
+  reset(300),
+]
+export const smileSet = { grin, giggle, sway, shy, smirk, winkSmile, sparkle, hearts, smug, rolling, snort, focus, determined, impressed }
+
 export const bodySet = { startle, grumpy, droop, bounce, headTilt, lean, dreamy, noddingOff, headShake, peek }
 
 export const idleSet = { think, doze, lookAround, doubleTake, spaceOut, rubEyes, sigh, stretch, headTilt, lean, dreamy, noddingOff }

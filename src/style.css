@@ -68,8 +68,17 @@ body {
 }
 .eyes.blink .eye { transform: rotate(var(--tiltL)) scale(var(--sx), .06); transition: transform .12s ease; }
 .eyes.blink .eye:last-child, .eyes.wink .eye:last-child { transform: rotate(var(--tiltR)) scale(var(--sx), .06); transition: transform .12s ease; }
-.eyes.shape-happy .eye, .eyes.shape-sad .eye, .eyes.shape-cross .eye { background: transparent; overflow: visible; clip-path: none; }
-.eyes.shape-happy .pupil, .eyes.shape-sad .pupil, .eyes.shape-cross .pupil { visibility: hidden; }
+.eyes.shape-happy .eye, .eyes.shape-sad .eye, .eyes.shape-cross .eye, .eyes.shape-sparkle .eye, .eyes.shape-heart .eye,
+.eyes.shape-smirk .eye:first-child { background: transparent; overflow: visible; clip-path: none; }
+.eyes.shape-happy .pupil, .eyes.shape-sad .pupil, .eyes.shape-cross .pupil, .eyes.shape-sparkle .pupil, .eyes.shape-heart .pupil,
+.eyes.shape-smirk .eye:first-child .pupil { visibility: hidden; }
+.eyes.shape-smirk .eye:first-child .arc { opacity: 1; }
+.star, .heart {
+  position: absolute; left: -4%; top: 50%; width: 108%; height: auto;
+  transform: translateY(-50%); opacity: 0; transition: opacity .15s ease, transform .3s ease; pointer-events: none;
+}
+.eyes.shape-sparkle .star { opacity: 1; }
+.eyes.shape-heart .heart { opacity: 1; }
 .arc {
   position: absolute; left: 0; top: 50%; width: 100%; height: auto;
   transform: translateY(-50%); opacity: 0; transition: opacity .15s ease;
