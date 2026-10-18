@@ -86,8 +86,8 @@ export function App() {
       wake()
       const gap = Date.now() - hiddenAt.current
       if (mode !== 'focus') return
-      if (hiddenAt.current && gap < 8000) { play('startle'); setTimeout(() => play('glanceUp'), 1900); say(L.notice(), { ms: 4500 }) }
-      else { play('bounce'); say(L.welcomeBack(), { ms: 3000 }) }
+      if (hiddenAt.current && gap < 8000) { play('glanceUp'); say(L.notice(), { ms: 4500 }) }
+      else { play('sway'); say(L.welcomeBack(), { ms: 3000 }) }
     }
     document.addEventListener('visibilitychange', onVis)
     return () => document.removeEventListener('visibilitychange', onVis)
@@ -202,8 +202,8 @@ export function App() {
     if (cfg.sound && !audio.current) { try { audio.current = new AudioContext() } catch { /* no audio */ } }
     setMode('focus'); setPhase('quiet')
     say(L.back(), { happy: true, ms: 2500 })
-    if (!started.current) { started.current = true; setTimeout(() => play('peek'), 2800) }
-    else if (isMorning()) setTimeout(() => play('yawn'), 3000)
+    started.current = true
+    setTimeout(() => play(isMorning() ? 'yawn' : 'determined'), 2800)
     snoozes.current = 0
     if (!demo) { wake(); fullscreen(); motionPermission() }
   }
@@ -215,7 +215,7 @@ export function App() {
     nextNudge.current = Date.now() + min(5)
     setPhase('quiet')
     snoozes.current++
-    if (snoozes.current >= 3) { play('headShake'); say('もう…。5分だけね。', { ms: 2200 }) } else say(L.snoozed(), { ms: 1800 })
+    if (snoozes.current >= 3) { play('smirk'); say('ほんとに？ …5分だけね。', { ms: 2200 }) } else say(L.snoozed(), { ms: 1800 })
   }
   const startBreak = () => {
     const t = { day: today(), sec: total.sec + elapsed }
@@ -224,7 +224,7 @@ export function App() {
     setMode('break'); setPhase('quiet')
     say(L.breakStart(), { ms: 2000 })
   }
-  const resume = () => { play('wakeOneEye'); setTimeout(start, 900) }
+  const resume = () => { play('wakeOneEye'); setTimeout(() => { start(); setTimeout(() => say('ちゃんと休めた。えらい。', { happy: true, ms: 2500 }), 2600) }, 900) }
   const stop = () => {
     play('droop'); say(L.bye(), { ms: 2500 })
     const t = { day: today(), sec: total.sec + elapsed }
@@ -237,12 +237,12 @@ export function App() {
   useEffect(() => {
     if (mode === 'focus' && phase === 'quiet') {
       if (now >= nextNudge.current) { setPhase('nudge'); nudgeAt.current = now; nextNag.current = now + min(3); say(L.nudge(Math.round(elapsed / 60)), { happy: true, hold: true }); notify() }
-      else for (const m of [60, 120, 180]) if (elapsed >= m * 60 && !milestones.current.has(m)) { milestones.current.add(m); play('bounce'); say(L.milestone(m), { ms: 3000 }) }
+      else for (const m of [60, 120, 180]) if (elapsed >= m * 60 && !milestones.current.has(m)) { milestones.current.add(m); play('impressed'); say(L.milestone(m), { ms: 3000 }) }
       else if (cfg.chatter && now >= nextChatter.current) { say(L.chatter()); scheduleChatter() }
       if (now >= nextNod.current) { nextNod.current = now + min(25); play('nod') }
     }
     if (mode === 'focus' && phase === 'nudge' && now >= nextNag.current) {
-      nextNag.current = now + min(3); play('grumpy'); setTimeout(() => say(L.nag(), { hold: true }), 800)
+      nextNag.current = now + min(3); play('droop'); setTimeout(() => say(L.nag(), { hold: true }), 800)
     }
     if (mode === 'break' && phase === 'quiet' && breakLeft <= 0) {
       setPhase('breakOver'); say(L.breakEnd(), { happy: true, hold: true }); notify()

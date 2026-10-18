@@ -343,22 +343,34 @@ export const impressed: Performance = [
   { sx: 1.1, sy: 1.1, ps: 1.3, px: 0, py: -.1, text: 'ほー', t: 0, hold: 1600 },
   reset(300),
 ]
+/** 休憩中の演目（癒し系）。目は閉じ気味のまま、ゆったり */
+export const breakSet = { sway, dreamy, sleepTalk, shy, hearts }
+export type BreakName = keyof typeof breakSet
+export function pickBreak(last: BreakName | null): BreakName {
+  const w: Record<BreakName, number> = { sway: 3, dreamy: 3, sleepTalk: 3, shy: 1, hearts: 1 }
+  if (last) w[last] = 0
+  const total = Object.values(w).reduce((a, b) => a + b, 0)
+  let r = Math.random() * total
+  for (const k of Object.keys(w) as BreakName[]) { r -= w[k]; if (r <= 0) return k }
+  return 'sway'
+}
 export const smileSet = { grin, giggle, sway, shy, smirk, winkSmile, sparkle, hearts, smug, rolling, snort, focus, determined, impressed }
 
 export const bodySet = { startle, grumpy, droop, bounce, headTilt, lean, dreamy, noddingOff, headShake, peek }
 
-export const idleSet = { think, doze, lookAround, doubleTake, spaceOut, rubEyes, sigh, stretch, headTilt, lean, dreamy, noddingOff }
+export const idleSet = { think, doze, lookAround, doubleTake, spaceOut, rubEyes, sigh, stretch, headTilt, lean, dreamy, noddingOff, focus }
 export type IdleName = keyof typeof idleSet
 
-/** 待機演目を重み付きで選ぶ。直前と同じものは避ける。 */
+/**
+ * 作業中の待機演目（集中系）。静かで、一緒に集中している感じ。
+ * 眠い時間帯だけウトウト系が混ざる。直前と同じものは避ける。
+ */
 export function pickIdle(opts: { sleepy: boolean; night: boolean; last: IdleName | null }): IdleName {
+  const drowsy = opts.sleepy || opts.night
   const w: Record<IdleName, number> = {
-    think: 3, lookAround: 3, doubleTake: 2, spaceOut: 2, sigh: 2,
-    doze: opts.night ? 4 : opts.sleepy ? 3 : 2,
-    rubEyes: opts.sleepy || opts.night ? 3 : 1,
-    stretch: opts.sleepy ? 3 : 0,
-    headTilt: 2, lean: 3, dreamy: 1,
-    noddingOff: opts.night ? 5 : opts.sleepy ? 4 : 1,
+    focus: 5, think: 3, spaceOut: 2, headTilt: 1, lookAround: 1,
+    doubleTake: 0, sigh: 0, lean: 0, dreamy: 0,
+    doze: drowsy ? 4 : 0, rubEyes: drowsy ? 2 : 0, stretch: opts.sleepy ? 2 : 0, noddingOff: drowsy ? 4 : 0,
   }
   if (opts.last) w[opts.last] = 0
   const total = Object.values(w).reduce((a, b) => a + b, 0)

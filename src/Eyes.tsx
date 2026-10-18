@@ -100,6 +100,7 @@ export function Eyes({ mood, eyeSize, pace = 3, demo, onPoke, onApproach, onBuzz
   const followStart = useRef(0)
   const perf = useRef<{ token: number; interruptible: boolean } | null>(null)
   const lastIdle = useRef<B.IdleName | null>(null)
+  const lastBreak = useRef<B.BreakName | null>(null)
   const taps = useRef<number[]>([])
   const approach = useRef<{ on: boolean; onEyes: boolean; x: number; y: number; timer: number }>({ on: false, onEyes: false, x: 0, y: 0, timer: 0 })
   const spin = useRef({ angle: 0, acc: 0, at: 0, last: 0 })  // 指が目の周りを回った量
@@ -204,7 +205,10 @@ export function Eyes({ mood, eyeSize, pace = 3, demo, onPoke, onApproach, onBuzz
     }
     const idle = () => {
       const m = moodRef.current
-      if (!busy() && (m === 'idle' || m === 'sleepy') && Date.now() > followUntil.current) {
+      if (!busy() && m === 'closed') {   // 休憩中は癒し系
+        const name = B.pickBreak(lastBreak.current); lastBreak.current = name
+        perform(B.breakSet[name], true)
+      } else if (!busy() && (m === 'idle' || m === 'sleepy') && Date.now() > followUntil.current) {
         const name = B.pickIdle({ sleepy: m === 'sleepy', night: B.isNight(), last: lastIdle.current })
         lastIdle.current = name
         const seq = name === 'rubEyes' && Math.random() < .5 ? [...B.rubEyes, ...B.doze] : B.idleSet[name]
@@ -214,12 +218,6 @@ export function Eyes({ mood, eyeSize, pace = 3, demo, onPoke, onApproach, onBuzz
     }
     later(idle, demo ? 3000 : Math.min(gap(), 20_000))
 
-    // 休憩中の寝言
-    const mumble = () => {
-      if (moodRef.current === 'closed' && !busy()) perform(B.sleepTalk, true)
-      later(mumble, demo ? 6000 : 20_000 + Math.random() * 20_000)
-    }
-    later(mumble, demo ? 4000 : 20_000)
 
     // ゆらぎ＋呼吸
     const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -373,8 +371,7 @@ export function Eyes({ mood, eyeSize, pace = 3, demo, onPoke, onApproach, onBuzz
     if (taps.current.length >= 3) { taps.current = []; perform(B.ticklish); return }
     if (perf.current?.interruptible) cancel()
     if (!busy()) {
-      root.current?.classList.add('wink'); setTimeout(() => root.current?.classList.remove('wink'), 260)
-      set({ px: 0, py: 0, t: 200, hold: 0 })
+      perform(B.winkSmile, true)
       followUntil.current = now + 1500
       onPoke?.()
     }
