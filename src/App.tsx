@@ -240,7 +240,7 @@ export function App() {
       <div class="actions">
         {mode === 'off' && <button type="button" class="primary" onClick={start}>はじめる</button>}
         {mode === 'focus' && phase === 'nudge' && <>
-          <button type="button" onClick={snooze}>あと5分</button>
+          <button type="button" onClick={snooze}>あと5分つづける</button>
           <button type="button" class="primary" onClick={startBreak}>休憩する</button>
         </>}
         {mode === 'break' && <button type="button" class="primary" onClick={resume}>もどる</button>}
