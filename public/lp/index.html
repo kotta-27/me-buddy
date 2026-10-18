@@ -224,11 +224,14 @@ footer a { color: var(--dim); text-decoration: none; }
   <path d="M150 310 L1050 310 L1150 450 L50 450 Z" fill="url(#sc-desk)" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/>
   <path d="M50 450 L1150 450 L1150 472 L50 472 Z" fill="#050506" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/>
 
-  <!-- 植物（左奥） -->
+  <!-- 植物（左手前、鉢は円柱） -->
   <g>
-    <path d="M190 312 l6 -34 h50 l6 34 Z" class="sc-body"/>
-    <path d="M221 278 c-6 -34 -34 -50 -52 -58 c20 -4 50 14 52 58 c2 -44 32 -62 52 -58 c-18 8 -46 24 -52 58" class="sc-ln"/>
-    <path d="M221 278 c-2 -20 -8 -36 -4 -56" class="sc-ln"/>
+    <path d="M200 372 l6 40 h52 l6 -40 Z" class="sc-body"/>
+    <ellipse cx="232" cy="412" rx="26" ry="6" fill="#050506" stroke="#fff" stroke-width="2.5"/>
+    <ellipse cx="232" cy="372" rx="32" ry="9" fill="#17171a" stroke="#fff" stroke-width="2.5"/>
+    <path d="M232 366 c-8 -36 -40 -54 -62 -64 c26 -2 58 18 62 64 c4 -46 36 -66 62 -64 c-22 10 -54 28 -62 64" class="sc-ln"/>
+    <path d="M232 366 c-2 -22 -10 -40 -6 -62" class="sc-ln"/>
+    <path d="M232 366 c6 -18 22 -30 38 -34" class="sc-ln" stroke-opacity=".7"/>
   </g>
 
   <!-- ノートPC（右、3/4） -->
@@ -240,16 +243,16 @@ footer a { color: var(--dim); text-decoration: none; }
     <g class="sc-thin"><path d="M842 258 h90 M838 276 h110 M834 294 h60"/></g>
   </g>
 
-  <!-- 本の山（スマホの支え） -->
+  <!-- 本（左奥に立てる。背表紙＋天の面で厚み） -->
   <g>
-    <path d="M330 338 L480 338 L470 316 L336 316 Z" class="sc-body"/>
-    <path d="M324 362 L486 362 L480 338 L330 338 Z" class="sc-top"/>
-    <path d="M318 386 L494 386 L486 362 L324 362 Z" class="sc-body"/>
-    <path d="M340 326 h120 M334 350 h140 M330 374 h150" class="sc-thin"/>
+    <path d="M312 322 v-94 h26 v94 Z" class="sc-body"/><path d="M312 228 l8 -8 h26 l-8 8 Z" class="sc-top"/><path d="M338 322 v-94 l8 -8 v94 Z" fill="#101013" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M348 322 v-108 h22 v108 Z" class="sc-body"/><path d="M348 214 l8 -8 h22 l-8 8 Z" class="sc-top"/><path d="M370 322 v-108 l8 -8 v108 Z" fill="#101013" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M382 322 l10 -84 h20 l-10 84 Z" class="sc-body"/><path d="M392 238 l8 -8 h20 l-8 8 Z" class="sc-top"/><path d="M412 238 l-10 84 l8 -8 l10 -84 Z" fill="#101013" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M318 240 h14 M318 250 h14 M354 228 h10 M398 250 h8" class="sc-thin"/>
   </g>
 
   <!-- スマホ（本に立てかけ、横向き） -->
-  <g transform="translate(386 286) rotate(-8) scale(.74)">
+  <g transform="translate(336 316) rotate(-9) scale(.68)">
     <ellipse cx="150" cy="70" rx="170" ry="90" fill="url(#sc-glow)"/>
     <rect x="0" y="0" width="300" height="140" rx="22" fill="#0b0b0d" stroke="#fff" stroke-width="3.2"/>
     <rect x="7" y="7" width="286" height="126" rx="16" fill="#000"/>
@@ -257,7 +260,7 @@ footer a { color: var(--dim); text-decoration: none; }
     <g class="sc-eye"><ellipse cx="126" cy="70" rx="18" ry="28" fill="#fff"/><ellipse cx="129" cy="73" rx="7" ry="10" fill="#000"/></g>
     <g class="sc-eye"><ellipse cx="174" cy="70" rx="18" ry="28" fill="#fff"/><ellipse cx="177" cy="73" rx="7" ry="10" fill="#000"/></g>
   </g>
-  <path d="M360 388 L540 388 L580 450 L320 450 Z" fill="url(#sc-glow)" opacity=".45"/>
+  <path d="M320 400 L520 400 L560 450 L280 450 Z" fill="url(#sc-glow)" opacity=".45"/>
 
   <!-- ノート＋ペン（中央手前） -->
   <g>
@@ -279,6 +282,7 @@ footer a { color: var(--dim); text-decoration: none; }
     <path class="sc-ln sc-steam b" d="M1084 356 q-8 -12 0 -24 q8 -12 0 -24" stroke-opacity=".5"/>
   </g>
 </svg>
+
 
     </figure>
   </div>
