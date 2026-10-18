@@ -85,6 +85,23 @@ body {
 }
 .eyes.swirl .swirl-mark { opacity: 1; animation-play-state: running; }
 @keyframes swirl { to { transform: rotate(360deg); } }
+@keyframes pupil-spin {
+  0.0% { transform: translate(calc(1.000 * var(--eye-w) * .28), calc(0.000 * var(--eye-h) * .25)) scale(var(--ps)); }
+  8.3% { transform: translate(calc(0.866 * var(--eye-w) * .28), calc(0.500 * var(--eye-h) * .25)) scale(var(--ps)); }
+  16.7% { transform: translate(calc(0.500 * var(--eye-w) * .28), calc(0.866 * var(--eye-h) * .25)) scale(var(--ps)); }
+  25.0% { transform: translate(calc(0.000 * var(--eye-w) * .28), calc(1.000 * var(--eye-h) * .25)) scale(var(--ps)); }
+  33.3% { transform: translate(calc(-0.500 * var(--eye-w) * .28), calc(0.866 * var(--eye-h) * .25)) scale(var(--ps)); }
+  41.7% { transform: translate(calc(-0.866 * var(--eye-w) * .28), calc(0.500 * var(--eye-h) * .25)) scale(var(--ps)); }
+  50.0% { transform: translate(calc(-1.000 * var(--eye-w) * .28), calc(0.000 * var(--eye-h) * .25)) scale(var(--ps)); }
+  58.3% { transform: translate(calc(-0.866 * var(--eye-w) * .28), calc(-0.500 * var(--eye-h) * .25)) scale(var(--ps)); }
+  66.7% { transform: translate(calc(-0.500 * var(--eye-w) * .28), calc(-0.866 * var(--eye-h) * .25)) scale(var(--ps)); }
+  75.0% { transform: translate(calc(-0.000 * var(--eye-w) * .28), calc(-1.000 * var(--eye-h) * .25)) scale(var(--ps)); }
+  83.3% { transform: translate(calc(0.500 * var(--eye-w) * .28), calc(-0.866 * var(--eye-h) * .25)) scale(var(--ps)); }
+  91.7% { transform: translate(calc(0.866 * var(--eye-w) * .28), calc(-0.500 * var(--eye-h) * .25)) scale(var(--ps)); }
+  100.0% { transform: translate(calc(1.000 * var(--eye-w) * .28), calc(-0.000 * var(--eye-h) * .25)) scale(var(--ps)); }
+}
+.eyes.spin .pupil { animation: pupil-spin .45s linear infinite; transition: none; }
+
 
 .mumble {
   position: absolute; left: 50%; top: -2.4em; transform: translateX(-50%);

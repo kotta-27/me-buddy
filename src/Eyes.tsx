@@ -99,6 +99,7 @@ export function Eyes({ mood, eyeSize, pace = 3, demo, onPoke }: Props) {
     v('--px', p.px); v('--py', p.py); v('--ps', p.ps); v('--sx', p.sx); v('--sy', p.sy)
     if (p.shape) { el.classList.toggle('shape-happy', p.shape === 'happy'); el.classList.toggle('shape-sad', p.shape === 'sad'); el.classList.toggle('shape-cross', p.shape === 'cross') }
     if (p.swirl !== undefined) el.classList.toggle('swirl', p.swirl)
+    if (p.spin !== undefined) el.classList.toggle('spin', p.spin)
     if (p.text !== undefined && text.current) {
       text.current.textContent = p.text ?? ''
       text.current.classList.toggle('on', !!p.text)
