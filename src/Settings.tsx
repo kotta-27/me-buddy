@@ -45,7 +45,7 @@ export function Settings({ open, cfg, onChange, onClose, onReset }: Props) {
         <h2>設定 <span class="ver">v{__APP_VERSION__}</span></h2>
         <div class="cols">
         <div class="col">
-        <div class="pair">
+        <div class="fields">
           <label>休憩を誘う間隔（分）
             <input id="s-interval" ref={intervalRef} type="number" inputMode="numeric" min={1} max={180} step={1} />
           </label>
