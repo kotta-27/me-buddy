@@ -200,7 +200,7 @@ export function App() {
   // ---- per-tick logic ----
   useEffect(() => {
     if (mode === 'focus' && phase === 'quiet') {
-      if (now >= nextNudge.current) { setPhase('nudge'); nudgeAt.current = now; nextNag.current = now + min(3); say(L.nudge(Math.round(elapsed / 60)), { happy: true, hold: true }); notify() }
+      if (now >= nextNudge.current) { setPhase('nudge'); nudgeAt.current = now; nextNag.current = now + min(3); say(L.nudge(Math.round(elapsed / 60)), { hold: true }); notify() }
       else for (const m of [60, 120, 180]) if (elapsed >= m * 60 && !milestones.current.has(m)) { milestones.current.add(m); play('impressed'); say(L.milestone(m), { ms: 3000 }) }
       else if (cfg.chatter && now >= nextChatter.current) { say(L.chatter()); scheduleChatter() }
       if (now >= nextNod.current) { nextNod.current = now + min(25); play('nod') }
