@@ -24,6 +24,7 @@ type Props = {
   demo?: boolean           // 演目の間隔を短くする（確認用）
   onPoke?: () => void
   onApproach?: () => void  // 長押しで寄っていった時
+  onBuzz?: () => void      // 本体の短い振動（通知のバイブ）を検知した時
 }
 
 /** 笑い目「^」。線幅一定、端丸め。ため息は 180° 回して「∪」 */
@@ -75,7 +76,7 @@ const Swirl = () => {
 const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms))
 
 /** 黒背景に目だけ。まばたき・視線の泳ぎ・ゆらぎ・指追い・演技。 */
-export function Eyes({ mood, eyeSize, pace = 3, demo, onPoke, onApproach }: Props) {
+export function Eyes({ mood, eyeSize, pace = 3, demo, onPoke, onApproach, onBuzz }: Props) {
   const paceRef = useRef(pace); paceRef.current = pace
   const root = useRef<HTMLDivElement>(null)
   const pair = useRef<HTMLDivElement>(null)
@@ -322,14 +323,29 @@ export function Eyes({ mood, eyeSize, pace = 3, demo, onPoke, onApproach }: Prop
     }
   }, [])
 
-  // 振ると目が回る
+  // 振ると目が回る。通知のバイブ（短い微振動）なら上を見る
   useEffect(() => {
-    let last = 0
+    let last = 0, lastBuzz = 0
+    const buf: { t: number; v: number }[] = []
+    const debug = new URLSearchParams(location.search).has('debug')
     const onMotion = (e: DeviceMotionEvent) => {
       const a = e.accelerationIncludingGravity
       if (!a) return
+      const now = Date.now()
       const g = Math.hypot(a.x ?? 0, a.y ?? 0, a.z ?? 0)
-      if (g > 25 && Date.now() - last > 4000 && moodRef.current !== 'closed') { last = Date.now(); perform(B.dizzy) }
+      if (g > 25 && now - last > 4000 && moodRef.current !== 'closed') { last = now; perform(B.dizzy); return }
+      // 重力を除いた加速度の大きさを 400ms ぶん貯めて RMS を見る
+      const lin = e.acceleration
+      const v = lin ? Math.hypot(lin.x ?? 0, lin.y ?? 0, lin.z ?? 0) : Math.abs(g - 9.81)
+      buf.push({ t: now, v }); while (buf.length && now - buf[0].t > 400) buf.shift()
+      const rms = Math.sqrt(buf.reduce((s, b) => s + b.v * b.v, 0) / Math.max(1, buf.length))
+      if (debug && text.current && now % 200 < 20) { text.current.textContent = `rms ${rms.toFixed(2)} n ${buf.length}`; text.current.classList.add('on') }
+      // 微振動: 0.35〜3 m/s² が 400ms 続く。大きく動いた（持ち上げた）時は除外
+      if (rms > .35 && rms < 3 && buf.length >= 8 && now - lastBuzz > 15_000 && now - last > 4000 && moodRef.current !== 'closed') {
+        lastBuzz = now
+        if (perf.current?.interruptible) cancel()
+        if (!busy()) { perform(B.glanceUp); onBuzz?.() }
+      }
     }
     window.addEventListener('devicemotion', onMotion)
     return () => window.removeEventListener('devicemotion', onMotion)

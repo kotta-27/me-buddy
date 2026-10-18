@@ -265,6 +265,7 @@ export function App() {
         pace={cfg.pace}
         onPoke={() => { if (mode === 'focus' && phase === 'quiet') say(L.poke(), { ms: 1800 }) }}
         onApproach={() => say(L.curious(), { ms: 2500 })}
+        onBuzz={() => { if (mode === 'focus') say(L.notice(), { ms: 4500 }) }}
       />
       <p class={`line ${line ? 'on' : ''}`} role="status" aria-live="polite">{line?.text ?? ''}</p>
 
