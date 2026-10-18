@@ -3,7 +3,7 @@
 黒い画面に、目だけ。ぱちっとまばたきする、勉強や作業の相棒。
 スマホを横向きにして机の端に立てかける想定。
 
-**→ https://kotta-27.github.io/me-buddy/**　紹介ページ: https://kotta-27.github.io/me-buddy/lp/
+**→ https://kotta-27.github.io/pachi/**　紹介ページ: https://kotta-27.github.io/pachi/lp/
 
 ![待機中。白い目が2つ、まばたきして視線が泳ぐ](docs/03-focus.png)
 
