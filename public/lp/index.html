@@ -11,12 +11,13 @@
 <meta property="og:image" content="https://kotta-27.github.io/pachi/lp/img/01-idle.png">
 <link rel="icon" type="image/svg+xml" href="../icon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&family=Nunito:wght@700;800&display=swap">
 <style>
 /* 黒いアプリと地続き。白い目だけが主役 */
 :root {
   --bg: #000; --fg: #fff; --dim: #b4b4b4; --mute: #5a5a5a; --line: #1f1f1f; --panel: #0a0a0a;
-  --font: 'Zen Kaku Gothic New', system-ui, -apple-system, sans-serif;
+  --font: 'Zen Maru Gothic', 'Hiragino Maru Gothic ProN', system-ui, sans-serif;   /* 丸ゴシック: 目の丸さに合わせる */
+  --latin: 'Nunito', 'Zen Maru Gothic', sans-serif;                                /* ロゴ・番号・ラベル */
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
@@ -24,16 +25,16 @@ html { scroll-behavior: smooth; }
 body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--font); line-height: 1.8; -webkit-font-smoothing: antialiased; }
 a { color: var(--fg); }
 .wrap { max-width: 980px; margin: 0 auto; padding-inline: 20px; }
-h1, h2, h3 { font-weight: 700; letter-spacing: .04em; text-wrap: balance; margin: 0; }
+h1, h2, h3 { font-weight: 700; letter-spacing: .03em; text-wrap: balance; margin: 0; }
 h2 { font-size: clamp(22px, 3.4vw, 30px); margin-bottom: 8px; }
 .lead { color: var(--dim); margin: 0 0 32px; max-width: 36em; }
 section { padding-block: 72px; border-top: 1px solid var(--line); }
-.eyebrow { font-size: 13px; letter-spacing: .3em; color: var(--dim); margin-bottom: 10px; }
+.eyebrow { font-size: 13px; letter-spacing: .3em; color: var(--dim); margin-bottom: 10px; font-weight: 500; }
 
 /* nav */
 nav { position: sticky; top: 0; z-index: 10; background: rgba(0,0,0,.85); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
 nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 56px; }
-.logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 18px; letter-spacing: .08em; text-decoration: none; }
+.logo { display: flex; align-items: center; gap: 10px; font-family: var(--latin); font-weight: 800; font-size: 20px; letter-spacing: .06em; text-decoration: none; }
 .logo svg { width: 28px; height: 28px; }
 nav ul { display: flex; gap: 22px; list-style: none; margin: 0; padding: 0; font-size: 14px; }
 nav ul a { color: var(--dim); text-decoration: none; }
@@ -51,14 +52,14 @@ nav ul a:hover { color: var(--fg); }
 .cta-row { display: flex; gap: 12px; flex-wrap: wrap; }
 .phone { position: relative; width: 100%; aspect-ratio: 844 / 390; border-radius: 24px; overflow: hidden; background: #000; border: 1px solid var(--line); box-shadow: 0 30px 80px rgba(0,0,0,.6); }
 .phone iframe { position: absolute; left: 0; top: 0; width: 844px; height: 390px; border: 0; background: #000; pointer-events: none; transform-origin: 0 0; }
-.phone .hint { position: absolute; right: 14px; bottom: 10px; font-size: 11px; letter-spacing: .2em; color: var(--dim); }
+.phone .hint { position: absolute; right: 14px; bottom: 10px; font-family: var(--latin); font-weight: 800; font-size: 11px; letter-spacing: .2em; color: var(--dim); }
 .small { font-size: 14px; color: var(--dim); margin-top: 16px; }
 
 /* steps */
 .steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
 @media (max-width: 720px) { .steps { grid-template-columns: 1fr; } }
 .step { background: var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 24px; }
-.step .n { font-size: 12px; letter-spacing: .3em; color: var(--dim); }
+.step .n { font-family: var(--latin); font-weight: 800; font-size: 13px; letter-spacing: .3em; color: var(--dim); }
 .step h3 { font-size: 18px; margin: 8px 0 6px; }
 .step p { margin: 0; color: var(--dim); font-size: 15px; }
 
