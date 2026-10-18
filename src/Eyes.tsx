@@ -118,7 +118,7 @@ export function Eyes({ mood, eyeSize, pace = 3, demo, onPoke, onApproach, onBuzz
     if (p.tiltL !== undefined) el.style.setProperty('--tiltL', `${p.tiltL}deg`)
     if (p.tiltR !== undefined) el.style.setProperty('--tiltR', `${p.tiltR}deg`)
     if (p.gap !== undefined) el.style.setProperty('--gapk', String(p.gap))
-    if (p.shape) for (const k of ['happy', 'sad', 'cross', 'smirk', 'sparkle', 'heart']) el.classList.toggle(`shape-${k}`, p.shape === k)
+    if (p.shape) for (const k of ['happy', 'sad', 'cross', 'smirk', 'sparkle', 'heart', 'shut']) el.classList.toggle(`shape-${k}`, p.shape === k)
     if (p.swirl !== undefined) el.classList.toggle('swirl', p.swirl)
     if (p.spin !== undefined) el.classList.toggle('spin', p.spin)
     if (p.text !== undefined && text.current) {
@@ -133,7 +133,7 @@ export function Eyes({ mood, eyeSize, pace = 3, demo, onPoke, onApproach, onBuzz
   }
   const base = (): Pose => {
     const m = moodRef.current
-    return { lid: m === 'closed' ? B.CLOSED : m === 'sleepy' ? .45 : 0, lidb: 0, px: 0, py: 0, ps: 1, sx: 1, sy: 1, ox: 0, oy: 0, rot: 0, tiltL: 0, tiltR: 0, gap: 1, shape: m === 'happy' ? 'happy' : 'idle', text: null, bubble: null, t: 400, hold: 0 }
+    return { lid: m === 'sleepy' ? .45 : 0, lidb: 0, px: 0, py: 0, ps: 1, sx: 1, sy: 1, ox: 0, oy: 0, rot: 0, tiltL: 0, tiltR: 0, gap: 1, shape: m === 'happy' ? 'happy' : m === 'closed' ? 'shut' : 'idle', text: null, bubble: null, t: 400, hold: 0 }
   }
 
   // ---- 演目再生 ----

@@ -11,7 +11,7 @@
  *  rot                ペアの回転 deg（首かしげ）
  *  gap                目と目の間隔の倍率（1 が通常。小さいとコンパクト）
  *  tiltL / tiltR      左右それぞれの目の傾き deg（眉の代わり。内側に倒すと怒り、外側で悲しみ）
- *  shape              'idle' | 'happy' | 'sad' | 'cross'（×目） | 'smirk'（左だけ弧） | 'sparkle'（キラキラ） | 'heart'
+ *  shape              'idle' | 'happy' | 'sad' | 'cross'（×目） | 'smirk'（左だけ弧） | 'sparkle'（キラキラ） | 'heart' | 'shut'（閉じ目 ⌣ ⌣）
  *  swirl              頭上の渦巻き
  *  spin               瞳が円を描いて回る（CSS アニメ）
  *  text               目の上に小さく出す独り言
@@ -25,7 +25,7 @@ export type Pose = {
   sx?: number; sy?: number
   ox?: number; oy?: number; rot?: number
   tiltL?: number; tiltR?: number; gap?: number
-  shape?: 'idle' | 'happy' | 'sad' | 'cross' | 'smirk' | 'sparkle' | 'heart'
+  shape?: 'idle' | 'happy' | 'sad' | 'cross' | 'smirk' | 'sparkle' | 'heart' | 'shut'
   swirl?: boolean
   spin?: boolean
   text?: string | null
@@ -34,7 +34,7 @@ export type Pose = {
   hold: number
 }
 export type Performance = Pose[]
-export type Base = { lid: number; shape: 'idle' | 'happy' }
+export type Base = { lid: number; shape: 'idle' | 'happy' | 'shut' }
 /** 「閉じた目」。完全に隠さず、下にひと筋残す */
 export const CLOSED = 0.93
 
@@ -153,16 +153,16 @@ export const nod: Performance = [
   reset(250, 0),
 ]
 export const sleepTalk: Performance = [
-  { lid: CLOSED, bubble: 'z', t: 0, hold: 900 },
-  { lid: CLOSED, bubble: 'z z', t: 0, hold: 900 },
-  { lid: CLOSED, bubble: 'z z z', t: 0, hold: 1400 },
-  { lid: CLOSED, bubble: null, text: '…ん', t: 0, hold: 1200 },
-  { lid: CLOSED, text: null, t: 0, hold: 0 },
+  { shape: 'shut', bubble: 'z', t: 0, hold: 900 },
+  { shape: 'shut', bubble: 'z z', t: 0, hold: 900 },
+  { shape: 'shut', bubble: 'z z z', t: 0, hold: 1400 },
+  { shape: 'shut', bubble: null, text: '…ん', t: 0, hold: 1200 },
+  { shape: 'shut', text: null, t: 0, hold: 0 },
 ]
 export const wakeOneEye: Performance = [
-  { lid: CLOSED, t: 0, hold: 100 },
-  { lidL: CLOSED, lidR: 0, t: 200, hold: 450 },
-  { lidL: 0, lidR: 0, t: 200, hold: 300 },
+  { shape: 'shut', t: 0, hold: 100 },
+  { shape: 'idle', lidL: CLOSED, lidR: 0, t: 200, hold: 450 },
+  { shape: 'idle', lidL: 0, lidR: 0, t: 200, hold: 300 },
 ]
 export const sleepyBlink: Performance = [
   { lid: CLOSED, t: 260, hold: 180 },
