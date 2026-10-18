@@ -1,6 +1,6 @@
 {
-  "name": "ぱち",
-  "short_name": "ぱち",
+  "name": "pachi",
+  "short_name": "pachi",
   "description": "黒い画面に目だけ。ぱちっとまばたきする作業相棒",
   "start_url": "./",
   "scope": "./",
