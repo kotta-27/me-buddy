@@ -49,6 +49,27 @@ const Cloud = () => {
   )
 }
 
+/** ×目 */
+const Cross = () => (
+  <svg class="cross" viewBox="0 0 100 100" aria-hidden="true">
+    <path d="M22 22 L78 78 M78 22 L22 78" fill="none" stroke="currentColor" stroke-width="13" stroke-linecap="round" />
+  </svg>
+)
+/** 頭上の渦巻き */
+const Swirl = () => {
+  // アルキメデス螺旋 3 周
+  const pts: string[] = []
+  for (let i = 0; i <= 120; i++) {
+    const th = (i / 120) * Math.PI * 6, r = 3 + th * 2.3
+    pts.push(`${(50 + r * Math.cos(th)).toFixed(1)},${(50 + r * Math.sin(th)).toFixed(1)}`)
+  }
+  return (
+    <svg class="swirl-mark" viewBox="0 0 100 100" aria-hidden="true">
+      <polyline points={pts.join(' ')} fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+  )
+}
+
 const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms))
 
 /** 黒背景に目だけ。まばたき・視線の泳ぎ・ゆらぎ・指追い・演技。 */
@@ -75,7 +96,8 @@ export function Eyes({ mood, eyeSize, pace = 3, demo, onPoke }: Props) {
     if (p.lid !== undefined) { v('--lidL', p.lid); v('--lidR', p.lid) }
     v('--lidL', p.lidL); v('--lidR', p.lidR); v('--lidb', p.lidb)
     v('--px', p.px); v('--py', p.py); v('--ps', p.ps); v('--sx', p.sx); v('--sy', p.sy)
-    if (p.shape) { el.classList.toggle('shape-happy', p.shape === 'happy'); el.classList.toggle('shape-sad', p.shape === 'sad') }
+    if (p.shape) { el.classList.toggle('shape-happy', p.shape === 'happy'); el.classList.toggle('shape-sad', p.shape === 'sad'); el.classList.toggle('shape-cross', p.shape === 'cross') }
+    if (p.swirl !== undefined) el.classList.toggle('swirl', p.swirl)
     if (p.text !== undefined && text.current) {
       text.current.textContent = p.text ?? ''
       text.current.classList.toggle('on', !!p.text)
@@ -251,8 +273,9 @@ export function Eyes({ mood, eyeSize, pace = 3, demo, onPoke }: Props) {
     <div ref={root} class={`eyes ${mood}`} aria-hidden="true" onPointerDown={onDown} onPointerUp={onUp} onPointerCancel={onUp} onPointerLeave={onUp}>
       <div ref={text} class="mumble"></div>
       <div ref={bubble} class="bubble"><Cloud /></div>
-      <div class="eye"><div class="pupil" /><Arc /></div>
-      <div class="eye"><div class="pupil" /><Arc /></div>
+      <Swirl />
+      <div class="eye"><div class="pupil" /><Arc /><Cross /></div>
+      <div class="eye"><div class="pupil" /><Arc /><Cross /></div>
     </div>
   )
 }

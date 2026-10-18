@@ -64,8 +64,8 @@ body {
 }
 .eyes.blink .eye { transform: scale(var(--sx), .06); transition: transform .12s ease; }
 .eyes.wink .eye:last-child { transform: scale(var(--sx), .06); transition: transform .12s ease; }
-.eyes.shape-happy .eye, .eyes.shape-sad .eye { background: transparent; overflow: visible; clip-path: none; }
-.eyes.shape-happy .pupil, .eyes.shape-sad .pupil { visibility: hidden; }
+.eyes.shape-happy .eye, .eyes.shape-sad .eye, .eyes.shape-cross .eye { background: transparent; overflow: visible; clip-path: none; }
+.eyes.shape-happy .pupil, .eyes.shape-sad .pupil, .eyes.shape-cross .pupil { visibility: hidden; }
 .arc {
   position: absolute; left: 0; top: 50%; width: 100%; height: auto;
   transform: translateY(-50%); opacity: 0; transition: opacity .15s ease;
@@ -73,6 +73,18 @@ body {
 }
 .eyes.shape-happy .arc, .eyes.shape-sad .arc { opacity: 1; }
 .eyes.shape-sad .arc { transform: translateY(-50%) rotate(180deg); }
+.cross {
+  position: absolute; left: 0; top: 50%; width: 100%; height: auto;
+  transform: translateY(-50%); opacity: 0; transition: opacity .12s ease; pointer-events: none;
+}
+.eyes.shape-cross .cross { opacity: 1; }
+.swirl-mark {
+  position: absolute; left: 50%; top: -34px; width: 64px; height: 64px; margin-left: -32px;
+  color: var(--dim); opacity: 0; transition: opacity .2s ease; pointer-events: none;
+  animation: swirl 1.6s linear infinite paused;
+}
+.eyes.swirl .swirl-mark { opacity: 1; animation-play-state: running; }
+@keyframes swirl { to { transform: rotate(360deg); } }
 
 .mumble {
   position: absolute; left: 50%; top: -2.4em; transform: translateX(-50%);

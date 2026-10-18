@@ -7,7 +7,8 @@
  *  px / py            瞳の位置 -1〜1
  *  ps                 瞳の大きさ倍率
  *  sx / sy            目全体の伸縮
- *  shape              'idle' | 'happy' | 'sad'
+ *  shape              'idle' | 'happy' | 'sad' | 'cross'（×目）
+ *  swirl              頭上の渦巻き
  *  text               目の上に小さく出す独り言
  *  bubble             雲の吹き出しの中身（考え中・寝息）。null で消す
  *  t                  このポーズへ移る時間 ms
@@ -17,7 +18,8 @@ export type Pose = {
   lid?: number; lidL?: number; lidR?: number; lidb?: number
   px?: number; py?: number; ps?: number
   sx?: number; sy?: number
-  shape?: 'idle' | 'happy' | 'sad'
+  shape?: 'idle' | 'happy' | 'sad' | 'cross'
+  swirl?: boolean
   text?: string | null
   bubble?: string | null
   t?: number
@@ -28,7 +30,7 @@ export type Base = { lid: number; shape: 'idle' | 'happy' }
 /** 「閉じた目」。完全に隠さず、下にひと筋残す */
 export const CLOSED = 0.93
 
-const R = { lid: 0, lidb: 0, px: 0, py: 0, ps: 1, sx: 1, sy: 1, shape: 'idle', text: null, bubble: null } as const
+const R = { lid: 0, lidb: 0, px: 0, py: 0, ps: 1, sx: 1, sy: 1, shape: 'idle', swirl: false, text: null, bubble: null } as const
 const reset = (t = 400, hold = 300): Pose => ({ ...R, t, hold })
 const jitter = (n: number, amp: number, key: 'px' | 'sx' | 'sy', t = 70): Performance =>
   Array.from({ length: n }, (_, i) => ({ [key]: (i % 2 ? 1 : -1) * amp + (key === 'px' ? 0 : 1), t, hold: t }))
@@ -105,12 +107,16 @@ export const drowsyRelease: Performance = [
   { lid: 0, ps: 1, px: .5, py: -.5, text: '？', t: 150, hold: 1200 },
   reset(),
 ]
+/** 目が回る：瞳がぐるぐる → ×目＋頭上に渦巻き、ふらふら → 戻る */
 export const dizzy: Performance = [
   ...Array.from({ length: 10 }, (_, i) => {
     const a = (i / 5) * Math.PI
     return { px: Math.cos(a) * .9, py: Math.sin(a) * .8, t: 70, hold: 70 }
   }),
-  { px: 0, py: 0, sx: 1.05, sy: 1.05, t: 200, hold: 600 },
+  { px: 0, py: 0, shape: 'cross', swirl: true, t: 100, hold: 400 },
+  ...jitter(6, .04, 'sx', 160).map((p) => ({ ...p, shape: 'cross' as const, swirl: true })),
+  { shape: 'cross', swirl: true, sx: 1, t: 150, hold: 900 },
+  { shape: 'idle', swirl: false, sx: 1.06, sy: 1.08, t: 120, hold: 500 },
   reset(),
 ]
 export const petted: Performance = [
