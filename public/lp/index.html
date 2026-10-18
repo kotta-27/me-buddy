@@ -75,7 +75,8 @@ nav ul a:hover { color: var(--fg); }
 .island { position: absolute; left: 18px; top: 50%; width: 9px; height: 84px; margin-top: -42px; border-radius: 5px; background: #000; z-index: 2; box-shadow: 0 0 0 1px #151515; }
 .phone { position: relative; width: 100%; height: 100%; border-radius: 27px; overflow: hidden; background: #000; }
 @media (max-width: 800px) { .device { transform: none; } .desk { padding: 8px 0 24px; } }
-.phone iframe { position: absolute; left: 0; top: 0; width: 844px; height: 390px; border: 0; background: #000; pointer-events: none; transform-origin: 0 0; }
+.phone iframe { position: absolute; left: 0; top: 0; width: 844px; height: 390px; border: 0; background: #000; transform-origin: 0 0; }
+.try { text-align: center; font-size: 13px; color: var(--dim); margin: 6px 0 0; letter-spacing: .04em; }
 .phone .hint { position: absolute; right: 14px; bottom: 10px; font-family: var(--latin); font-weight: 800; font-size: 11px; letter-spacing: .2em; color: var(--dim); }
 .small { font-size: 14px; color: var(--dim); margin-top: 16px; }
 
@@ -168,10 +169,11 @@ footer a { color: var(--dim); text-decoration: none; }
       <div class="device" aria-label="横向きにしたスマホ。画面には白い目が2つ、まばたきしている">
         <div class="island" aria-hidden="true"></div>
         <div class="phone">
-          <iframe src="../?demo" title="pachi（デモ）" loading="eager" tabindex="-1"></iframe>
+          <iframe src="../?demo" title="pachi（デモ）" loading="eager"></iframe>
           <span class="hint">LIVE</span>
         </div>
       </div>
+      <p class="try">触ってみて。なでる ／ 目をタップ ／ 長押し ／ 目の周りをぐるぐる</p>
     </div>
   </div>
 </header>

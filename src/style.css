@@ -194,4 +194,15 @@ dialog select {
 .row button { height: 40px; font-size: 13px; }
 .hint { font-size: 11px; color: var(--mute); letter-spacing: .1em; text-align: center; margin: 0; }
 
+/* デモ（LP 埋め込み）: 指カーソルとタッチの波紋 */
+body.demo { cursor: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='32' viewBox='0 0 28 32'%3E%3Cpath d='M10 2a3 3 0 0 1 3 3v9h1V11a3 3 0 0 1 6 0v3h1v-1a3 3 0 0 1 6 0v8c0 5-4 10-10 10h-3c-3 0-5-1-7-3l-5-6a3 3 0 0 1 4-4l1 1V5a3 3 0 0 1 3-3z' fill='%23fff' stroke='%23000' stroke-width='2' stroke-linejoin='round'/%3E%3C/svg%3E") 10 2, pointer; }
+body.demo button { cursor: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='32' viewBox='0 0 28 32'%3E%3Cpath d='M10 2a3 3 0 0 1 3 3v9h1V11a3 3 0 0 1 6 0v3h1v-1a3 3 0 0 1 6 0v8c0 5-4 10-10 10h-3c-3 0-5-1-7-3l-5-6a3 3 0 0 1 4-4l1 1V5a3 3 0 0 1 3-3z' fill='%23fff' stroke='%23000' stroke-width='2' stroke-linejoin='round'/%3E%3C/svg%3E") 10 2, pointer; }
+.ripple {
+  position: fixed; width: 44px; height: 44px; margin: -22px 0 0 -22px; border-radius: 50%;
+  border: 2px solid rgba(255,255,255,.55); background: rgba(255,255,255,.08); pointer-events: none; z-index: 20;
+  animation: ripple .55s ease-out forwards;
+}
+.ripple.hold { animation: none; transform: scale(.9); transition: transform 3s ease-out; }
+.ripple.hold.on { transform: scale(1.6); }
+@keyframes ripple { from { transform: scale(.4); opacity: 1; } to { transform: scale(1.8); opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .eye, .pupil, .arc { transition: none; } }
