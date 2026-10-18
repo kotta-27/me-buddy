@@ -71,7 +71,7 @@ export function Settings({ open, cfg, onChange, onClose, onReset }: Props) {
         </div>
         <div class="col">
         <div class="preview" aria-hidden="true">
-          <div class="pv-pair"><span class="pv-eye"><i /></span><span class="pv-eye"><i /></span></div>
+          <div class="pv-device"><span class="pv-island" /><div class="pv-screen"><div class="pv-pair"><span class="pv-eye"><i /></span><span class="pv-eye"><i /></span></div></div></div>
         </div>
         <label>目の大きさ
           <input id="s-size" type="range" min={50} max={160} step={5} value={cfg.eyeSize} onInput={num('eyeSize', 50)} />

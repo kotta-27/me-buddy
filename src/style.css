@@ -186,8 +186,12 @@ dialog form { display: flex; flex-direction: column; gap: 14px; }
 .cols { display: flex; flex-direction: column; gap: 14px; }
 .col { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
 /* 目のプレビュー: 大きさ・間隔・明るさを実際の変数で描く（縮小表示） */
-.preview { height: 64px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--line); border-radius: 12px; background: #000; overflow: hidden; }
-.pv-pair { display: flex; gap: var(--eye-gap); transform: scale(.3); }
+/* LP と同じ横向きスマホの枠に、実際の変数で目を描く */
+.preview { display: flex; align-items: center; justify-content: center; }
+.pv-device { position: relative; width: 100%; max-width: 240px; aspect-ratio: 860 / 406; border-radius: 12px; background: #0b0b0d; padding: 3px; box-sizing: border-box; box-shadow: inset 0 0 0 1px #4a4a50, 0 10px 24px rgba(0,0,0,.6); }
+.pv-island { position: absolute; left: 7px; top: 50%; width: 3px; height: 28px; margin-top: -14px; border-radius: 2px; background: #000; box-shadow: 0 0 0 1px #151515; z-index: 2; }
+.pv-screen { width: 100%; height: 100%; border-radius: 9px; background: #000; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+.pv-pair { display: flex; gap: var(--eye-gap); transform: scale(.34); }
 .pv-eye { position: relative; width: var(--eye-w); height: var(--eye-h); border-radius: 50%; background: var(--fg); overflow: hidden; }
 .pv-eye i { position: absolute; left: 30%; top: 35%; width: 40%; height: 35%; border-radius: 50%; background: #000; }
 .pair { display: flex; gap: 16px; }
@@ -200,8 +204,9 @@ dialog form { display: flex; flex-direction: column; gap: 14px; }
   dialog form { gap: 8px; }
   dialog input[type=range] { height: 16px; margin: 0; }
   /* プレビューは見出し行の真ん中に */
-  .preview { position: absolute; top: -4px; left: 50%; transform: translateX(-50%); width: 190px; height: 42px; }
-  .pv-pair { transform: scale(.2); }
+  .preview { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); width: 112px; }
+  .pv-device { box-shadow: inset 0 0 0 1px #4a4a50; }
+  .pv-pair { transform: scale(.13); }
   dialog h2 { padding-right: 300px; }
   .cols { flex-direction: row; gap: 28px; }
   .col { flex: 1 1 0; gap: 10px; }
