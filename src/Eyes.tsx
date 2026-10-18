@@ -152,7 +152,11 @@ export function Eyes({ mood, eyeSize, pace = 3, demo, onPoke, onApproach, onBuzz
   const busy = () => perf.current !== null
 
   // mood が変わったら演技を止めて基本姿勢へ
-  useEffect(() => { perf.current = null; set(base()) }, [mood])
+  useEffect(() => {
+    perf.current = null; set(base())
+    // 休憩に入ったら、まず寝息
+    if (mood === 'closed') { const id = setTimeout(() => { if (moodRef.current === 'closed' && !busy()) { lastBreak.current = 'sleepTalk'; perform(B.sleepTalk, true) } }, 2500); return () => clearTimeout(id) }
+  }, [mood])
 
   // App からの合図
   useEffect(() => {

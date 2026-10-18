@@ -153,10 +153,11 @@ export const nod: Performance = [
   reset(250, 0),
 ]
 export const sleepTalk: Performance = [
-  { shape: 'shut', bubble: 'z', t: 0, hold: 900 },
-  { shape: 'shut', bubble: 'z z', t: 0, hold: 900 },
-  { shape: 'shut', bubble: 'z z z', t: 0, hold: 1400 },
-  { shape: 'shut', bubble: null, text: '…ん', t: 0, hold: 1200 },
+  { shape: 'shut', oy: 4, bubble: 'z', t: 600, hold: 900 },
+  { shape: 'shut', oy: 0, bubble: 'z z', t: 600, hold: 900 },
+  { shape: 'shut', oy: 4, bubble: 'z z z', t: 600, hold: 1600 },
+  { shape: 'shut', oy: 0, bubble: null, t: 600, hold: 600 },
+  { shape: 'shut', text: '…ん', t: 0, hold: 1200 },
   { shape: 'shut', text: null, t: 0, hold: 0 },
 ]
 export const wakeOneEye: Performance = [
@@ -347,7 +348,7 @@ export const impressed: Performance = [
 export const breakSet = { sway, dreamy, sleepTalk, shy, hearts }
 export type BreakName = keyof typeof breakSet
 export function pickBreak(last: BreakName | null): BreakName {
-  const w: Record<BreakName, number> = { sway: 3, dreamy: 3, sleepTalk: 3, shy: 1, hearts: 1 }
+  const w: Record<BreakName, number> = { sleepTalk: 6, sway: 2, dreamy: 2, shy: 1, hearts: 1 }
   if (last) w[last] = 0
   const total = Object.values(w).reduce((a, b) => a + b, 0)
   let r = Math.random() * total
