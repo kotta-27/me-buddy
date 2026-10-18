@@ -170,6 +170,12 @@ button:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; }
   display: inline-flex; align-items: center; justify-content: center;
   transition: color .4s ease;
 }
+/* 開始前のロゴ（左上）。タップで紹介ページ */
+.brand { position: absolute; top: calc(14px + env(safe-area-inset-top, 0px)); left: calc(20px + env(safe-area-inset-left, 0px)); color: var(--fg); opacity: .9; display: block; line-height: 0; }
+.wm { display: block; }
+@keyframes wm-blink { 0%, 93%, 100% { transform: scaleY(1); } 96% { transform: scaleY(.08); } }
+.wm-eye { transform-box: fill-box; transform-origin: center; animation: wm-blink 5s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .wm-eye { animation: none; } }
 /* 開始前は操作しやすいように、はっきり見せる。作業中は控えめ */
 .stage.off .gear, .stage.off .foot { color: var(--dim); }
 

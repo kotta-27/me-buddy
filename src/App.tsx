@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'preact/hooks'
 import { Eyes, play, type Mood } from './Eyes'
 import { isMorning } from './behaviors'
 import { Settings } from './Settings'
+import { Wordmark } from './Wordmark'
 import * as L from './lines'
 import { loadConfig, loadSession, loadTotal, saveConfig, saveSession, saveTotal, today, type Config, type Total } from './store'
 
@@ -224,6 +225,7 @@ export function App() {
 
   return (
     <main class={`stage ${mode === 'off' ? 'off' : ''}`}>
+      {mode === 'off' && !demo && <a class="brand" href="lp/" aria-label="pachi の紹介ページ"><Wordmark height={26} /></a>}
       <Eyes
         mood={mood}
         eyeSize={cfg.eyeSize}
