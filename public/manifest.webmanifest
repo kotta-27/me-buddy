@@ -1,7 +1,7 @@
 {
-  "name": "め",
-  "short_name": "め",
-  "description": "黒い画面に目だけの作業相棒",
+  "name": "ぱち",
+  "short_name": "ぱち",
+  "description": "黒い画面に目だけ。ぱちっとまばたきする作業相棒",
   "start_url": "./",
   "scope": "./",
   "display": "fullscreen",

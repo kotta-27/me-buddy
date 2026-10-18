@@ -1,9 +1,9 @@
-# め
+# ぱち
 
-黒い画面に、目だけ。勉強や作業のとなりに置いておく相棒。
+黒い画面に、目だけ。ぱちっとまばたきする、勉強や作業の相棒。
 スマホを横向きにして机の端に立てかける想定。
 
-**→ https://kotta-27.github.io/me-buddy/**
+**→ https://kotta-27.github.io/me-buddy/**　紹介ページ: https://kotta-27.github.io/me-buddy/lp/
 
 ![待機中。白い目が2つ、まばたきして視線が泳ぐ](docs/03-focus.png)
 
@@ -115,6 +115,7 @@ npm run dev
 | `src/Settings.tsx` | 設定ダイアログ |
 | `src/lines.ts` | セリフ集。ここに足せば口数が増える |
 | `src/store.ts` | localStorage（設定・今日の合計） |
+| `public/lp/` | 紹介ページ（静的 HTML。ヒーローは実アプリを iframe で縮小表示） |
 
 ## デプロイ
 
