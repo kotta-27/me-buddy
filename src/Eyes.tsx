@@ -276,7 +276,7 @@ export function Eyes({ mood, eyeSize, pace = 3, demo, onPoke, onApproach, onBuzz
   useEffect(() => {
     const a = approach.current
     let rest = { cx: 0, cy: 0, w: 0, h: 0 }   // 静止位置（長押し開始時に測る）
-    let t0 = 0, raf = 0
+    let t0 = 0, raf = 0, downAt = { x: 0, y: 0 }
     // 長押しが続くほどゆっくり寄る（7秒で最大）。ただし指に近づきすぎない
     const moveTo = (x: number, y: number) => {
       const { cx, cy, w, h } = rest
@@ -298,6 +298,7 @@ export function Eyes({ mood, eyeSize, pace = 3, demo, onPoke, onApproach, onBuzz
       if (moodRef.current === 'closed') return
       a.x = e.clientX; a.y = e.clientY
       a.onEyes = !!(e.target as Element).closest('.eye')
+      downAt = { x: e.clientX, y: e.clientY }
       clearTimeout(a.timer)
       a.timer = window.setTimeout(() => {
         const r = root.current?.getBoundingClientRect()
@@ -315,7 +316,7 @@ export function Eyes({ mood, eyeSize, pace = 3, demo, onPoke, onApproach, onBuzz
       const p = pos(e); if (!p) return
       a.x = p[0]; a.y = p[1]
       if (a.on) a.onEyes = !!(document.elementFromPoint(p[0], p[1])?.closest('.eye'))
-      else if (a.timer && Math.hypot(p[0] - a.x, p[1] - a.y) > 12) { /* 動きすぎたら長押し扱いにしない */ }
+      else if (a.timer && Math.hypot(p[0] - downAt.x, p[1] - downAt.y) > 12) { clearTimeout(a.timer); a.timer = 0 }   // 動いたら「なでる」。長押しにしない
     }
     const up = () => {
       clearTimeout(a.timer); a.timer = 0
