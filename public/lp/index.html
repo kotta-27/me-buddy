@@ -86,6 +86,16 @@ nav ul a:hover { color: var(--fg); }
 .phone .hint { position: absolute; right: 14px; bottom: 10px; font-family: var(--latin); font-weight: 800; font-size: 11px; letter-spacing: .2em; color: var(--dim); }
 .small { font-size: 14px; color: var(--dim); margin-top: 16px; }
 
+/* イラスト帯 */
+.band { padding: 0; border-top: 0; }
+.band .wrap { max-width: 1100px; }
+.band-svg { display: block; width: 100%; height: auto; }
+.band figure { margin: 0; }
+.band figcaption { text-align: center; color: var(--dim); font-size: 14px; margin-top: 10px; }
+.night { background: #000; border-top: 1px solid var(--line); padding-block: 56px; }
+.night h2 { text-align: center; margin-bottom: 20px; }
+.night .lead { text-align: center; margin-inline: auto; }
+
 /* steps */
 .steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
 @media (max-width: 720px) { .steps { grid-template-columns: 1fr; } }
@@ -186,6 +196,94 @@ footer a { color: var(--dim); text-decoration: none; }
   </div>
 </header>
 
+<section class="band" aria-label="机の上の pachi">
+  <div class="wrap">
+    <figure>
+<svg xmlns="http://www.w3.org/2000/svg" class="band-svg" viewBox="0 150 1200 360" role="img" aria-label="机の上。ノートPC、ノートとペン、湯気の立つマグ、本に立てかけた横向きのスマホに白い目が2つ">
+  <defs>
+    <radialGradient id="sc-spot" cx="50%" cy="38%" r="60%"><stop offset="0" stop-color="#fff" stop-opacity=".10"/><stop offset=".6" stop-color="#fff" stop-opacity=".03"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+    <radialGradient id="sc-glow" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fff" stop-opacity=".18"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+    <linearGradient id="sc-desk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#17171a"/><stop offset="1" stop-color="#0b0b0d"/></linearGradient>
+    <linearGradient id="sc-screen" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1a1b20"/><stop offset="1" stop-color="#0e0f12"/></linearGradient>
+    <style>
+      .sc-ln{fill:none;stroke:#fff;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+      .sc-thin{fill:none;stroke:#fff;stroke-width:1.5;stroke-linecap:round;stroke-opacity:.45}
+      .sc-body{fill:#0a0a0c;stroke:#fff;stroke-width:2.5;stroke-linejoin:round}
+      .sc-top{fill:#15161a;stroke:#fff;stroke-width:2.5;stroke-linejoin:round}
+      @keyframes sc-blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.08)}}
+      .sc-eye{transform-box:fill-box;transform-origin:center;animation:sc-blink 4.8s ease-in-out infinite}
+      @keyframes sc-steam{0%{transform:translateY(0);opacity:.55}100%{transform:translateY(-14px);opacity:0}}
+      .sc-steam{animation:sc-steam 2.6s ease-out infinite}.sc-steam.b{animation-delay:1.3s}
+    </style>
+  </defs>
+
+  <rect y="150" width="1200" height="360" fill="#000"/>
+  <rect y="150" width="1200" height="360" fill="url(#sc-spot)"/>
+
+  <!-- 机（手前に広がる台形）＋前板 -->
+  <path d="M150 310 L1050 310 L1150 450 L50 450 Z" fill="url(#sc-desk)" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M50 450 L1150 450 L1150 472 L50 472 Z" fill="#050506" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/>
+
+  <!-- 植物（左奥） -->
+  <g>
+    <path d="M190 312 l6 -34 h50 l6 34 Z" class="sc-body"/>
+    <path d="M221 278 c-6 -34 -34 -50 -52 -58 c20 -4 50 14 52 58 c2 -44 32 -62 52 -58 c-18 8 -46 24 -52 58" class="sc-ln"/>
+    <path d="M221 278 c-2 -20 -8 -36 -4 -56" class="sc-ln"/>
+  </g>
+
+  <!-- ノートPC（右、3/4） -->
+  <g>
+    <path d="M800 322 L985 322 L1012 384 L768 384 Z" class="sc-top"/>
+    <g class="sc-thin"><path d="M814 338 h160 M810 348 h168 M806 358 h176 M802 368 h100 M832 374 h100"/></g>
+    <path d="M806 322 L818 226 L986 226 L985 322 Z" fill="url(#sc-screen)" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M820 238 L974 238 L973 310 L812 310 Z" fill="#0b0c10"/>
+    <g class="sc-thin"><path d="M842 258 h90 M838 276 h110 M834 294 h60"/></g>
+  </g>
+
+  <!-- 本の山（スマホの支え） -->
+  <g>
+    <path d="M330 338 L480 338 L470 316 L336 316 Z" class="sc-body"/>
+    <path d="M324 362 L486 362 L480 338 L330 338 Z" class="sc-top"/>
+    <path d="M318 386 L494 386 L486 362 L324 362 Z" class="sc-body"/>
+    <path d="M340 326 h120 M334 350 h140 M330 374 h150" class="sc-thin"/>
+  </g>
+
+  <!-- スマホ（本に立てかけ、横向き） -->
+  <g transform="translate(386 286) rotate(-8) scale(.74)">
+    <ellipse cx="150" cy="70" rx="170" ry="90" fill="url(#sc-glow)"/>
+    <rect x="0" y="0" width="300" height="140" rx="22" fill="#0b0b0d" stroke="#fff" stroke-width="3.2"/>
+    <rect x="7" y="7" width="286" height="126" rx="16" fill="#000"/>
+    <rect x="14" y="54" width="4" height="32" rx="2" fill="#000" stroke="#222"/>
+    <g class="sc-eye"><ellipse cx="126" cy="70" rx="18" ry="28" fill="#fff"/><ellipse cx="129" cy="73" rx="7" ry="10" fill="#000"/></g>
+    <g class="sc-eye"><ellipse cx="174" cy="70" rx="18" ry="28" fill="#fff"/><ellipse cx="177" cy="73" rx="7" ry="10" fill="#000"/></g>
+  </g>
+  <path d="M360 388 L540 388 L580 450 L320 450 Z" fill="url(#sc-glow)" opacity=".45"/>
+
+  <!-- ノート＋ペン（中央手前） -->
+  <g>
+    <path d="M560 372 L760 372 L786 436 L522 436 Z" class="sc-top"/>
+    <path d="M661 372 L654 436" class="sc-thin"/>
+    <g class="sc-thin"><path d="M576 388 h70 M572 402 h66 M568 416 h58 M676 388 h70 M678 402 h54 M680 416 h40"/></g>
+    <path d="M700 428 L758 392" class="sc-ln" stroke-width="5"/>
+    <path d="M700 428 l-7 4 l3 -8" class="sc-ln"/>
+  </g>
+
+  <!-- マグ（右手前）＋湯気 -->
+  <g>
+    <ellipse cx="1070" cy="432" rx="42" ry="9" fill="#0a0a0c" stroke="#fff" stroke-width="2.5"/>
+    <path d="M1040 374 q0 -8 10 -8 h48 q10 0 10 8 v42 q0 10 -10 10 h-48 q-10 0 -10 -10 Z" class="sc-body"/>
+    <ellipse cx="1074" cy="367" rx="34" ry="8" fill="#17171a" stroke="#fff" stroke-width="2.5"/>
+    <ellipse cx="1074" cy="368" rx="26" ry="5" fill="#0b0b0d"/>
+    <path d="M1108 382 q26 -4 26 18 q0 20 -26 18" class="sc-ln"/>
+    <path class="sc-ln sc-steam" d="M1060 356 q-8 -12 0 -24 q8 -12 0 -24" stroke-opacity=".5"/>
+    <path class="sc-ln sc-steam b" d="M1084 356 q-8 -12 0 -24 q8 -12 0 -24" stroke-opacity=".5"/>
+  </g>
+</svg>
+
+    </figure>
+  </div>
+</section>
+
 <section id="how">
   <div class="wrap">
     <div class="eyebrow">使い方</div>
@@ -229,6 +327,70 @@ footer a { color: var(--dim); text-decoration: none; }
       <li><b>静か</b><span>音は既定オフ。鳴らすなら小さなチャイム。バイブも選べる。</span></li>
       <li><b>軽い</b><span>依存は Preact だけ。黒ベタで電池にやさしい。目の明るさも下げられる。</span></li>
     </ul>
+  </div>
+</section>
+
+<section class="night" aria-label="深夜の机">
+  <div class="wrap">
+    <h2>深夜でも、まぶしくない。</h2>
+    <p class="lead">画面はほぼ黒。光るのは目だけ。OLED なら消灯に近い。</p>
+<svg xmlns="http://www.w3.org/2000/svg" class="band-svg" viewBox="0 0 1200 420" role="img" aria-label="夜の部屋。スタンドの光の中でノートPCに向かう人のシルエット。横に置いた横向きのスマホに白い目が2つ">
+  <defs>
+    <radialGradient id="ncone" cx="50%" cy="0%" r="75%"><stop offset="0" stop-color="#fff" stop-opacity=".22"/><stop offset=".55" stop-color="#fff" stop-opacity=".06"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+    <radialGradient id="nglow" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fff" stop-opacity=".16"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+    <linearGradient id="ndesk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#141417"/><stop offset="1" stop-color="#0a0a0c"/></linearGradient>
+    <style>
+      .nt-ln{fill:none;stroke:#fff;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+      .nt-thin{fill:none;stroke:#fff;stroke-width:1.5;stroke-linecap:round;stroke-opacity:.4}
+      .nt-body{fill:#0a0a0c;stroke:#fff;stroke-width:2.5;stroke-linejoin:round}
+      .nt-top{fill:#15161a;stroke:#fff;stroke-width:2.5;stroke-linejoin:round}
+      @keyframes nt-blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.08)}}
+      .nt-eye{transform-box:fill-box;transform-origin:center;animation:nt-blink 5.2s ease-in-out infinite}
+    </style>
+  </defs>
+  <rect width="1200" height="420" fill="#000"/>
+  <!-- 窓（夜） -->
+  <rect x="860" y="40" width="200" height="150" rx="4" fill="#06060a" stroke="#fff" stroke-width="2" stroke-opacity=".5"/>
+  <path d="M960 40 v150 M860 115 h200" stroke="#fff" stroke-width="1.5" stroke-opacity=".35"/>
+  <circle cx="1012" cy="78" r="10" fill="#fff" fill-opacity=".8"/>
+  <!-- スタンドの光 -->
+  <path d="M770 86 L520 360 L1000 360 Z" fill="url(#ncone)"/>
+  <!-- スタンド -->
+  <path d="M730 92 l16 -34 l78 0 l12 34 Z" class="nt-body"/>
+  <path d="M780 92 l-4 206" class="nt-ln"/>
+  <ellipse cx="776" cy="300" rx="40" ry="8" class="nt-body"/>
+  <!-- 机 -->
+  <path d="M160 300 L1040 300 L1120 400 L80 400 Z" fill="url(#ndesk)" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M80 400 L1120 400 L1120 418 L80 418 Z" fill="#050506" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/>
+  <!-- 人（シルエット、後ろ姿） -->
+  <g>
+    <path d="M520 300 c0 -70 36 -110 90 -118 c54 8 90 48 90 118 Z" fill="#050507" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/>
+    <circle cx="610" cy="150" r="36" fill="#050507" stroke="#fff" stroke-width="2.5"/>
+  </g>
+  <!-- ノートPC（背面がこちら向き、人の手前） -->
+  <g>
+    <path d="M548 300 L680 300 L700 334 L528 334 Z" class="nt-top"/>
+    <path d="M556 300 L566 224 L674 224 L680 300 Z" fill="#0d0e12" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/>
+    <circle cx="619" cy="262" r="5" fill="none" stroke="#fff" stroke-width="1.5" stroke-opacity=".5"/>
+  </g>
+  <!-- マグ -->
+  <g>
+    <path d="M790 324 q0 -6 8 -6 h38 q8 0 8 6 v32 q0 8 -8 8 h-38 q-8 0 -8 -8 Z" class="nt-body"/>
+    <ellipse cx="817" cy="318" rx="27" ry="6" fill="#15161a" stroke="#fff" stroke-width="2.5"/>
+    <path d="M844 330 q20 -3 20 14 q0 15 -20 14" class="nt-ln"/>
+  </g>
+  <!-- スマホ（左、立てかけ）＋光 -->
+  <g transform="translate(252 240) rotate(-7) scale(.7)">
+    <ellipse cx="150" cy="70" rx="180" ry="100" fill="url(#nglow)"/>
+    <rect x="0" y="0" width="300" height="140" rx="22" fill="#0b0b0d" stroke="#fff" stroke-width="3.2"/>
+    <rect x="7" y="7" width="286" height="126" rx="16" fill="#000"/>
+    <rect x="14" y="54" width="4" height="32" rx="2" fill="#000" stroke="#222"/>
+    <g class="nt-eye"><ellipse cx="126" cy="70" rx="18" ry="28" fill="#fff"/><ellipse cx="129" cy="73" rx="7" ry="10" fill="#000"/></g>
+    <g class="nt-eye"><ellipse cx="174" cy="70" rx="18" ry="28" fill="#fff"/><ellipse cx="177" cy="73" rx="7" ry="10" fill="#000"/></g>
+  </g>
+  <path d="M250 330 L440 330 L470 400 L220 400 Z" fill="url(#nglow)" opacity=".5"/>
+</svg>
+
   </div>
 </section>
 
