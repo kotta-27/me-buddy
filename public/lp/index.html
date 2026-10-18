@@ -90,7 +90,11 @@ nav ul a:hover { color: var(--fg); }
 .band { padding: 0; border-top: 0; }
 .band .wrap { max-width: 1100px; }
 .band-svg { display: block; width: 100%; height: auto; }
-.band figure { margin: 0; }
+.band figure { margin: 0; position: relative; }
+.band-copy { text-align: center; display: flex; flex-direction: column; gap: 6px; padding: 56px 0 28px; }
+.band-copy strong { font-size: clamp(20px, 2.6vw, 28px); font-weight: 700; letter-spacing: .04em; }
+.band-copy span { font-size: clamp(13px, 1.4vw, 15px); color: var(--dim); letter-spacing: .04em; }
+@media (max-width: 640px) { .band-copy { padding: 40px 0 16px; } }
 .band figcaption { text-align: center; color: var(--dim); font-size: 14px; margin-top: 10px; }
 .night { background: #000; border-top: 1px solid var(--line); padding-block: 56px; }
 .night h2 { text-align: center; margin-bottom: 20px; }
@@ -199,7 +203,11 @@ footer a { color: var(--dim); text-decoration: none; }
 <section class="band" aria-label="机の上の pachi">
   <div class="wrap">
     <figure>
-<svg xmlns="http://www.w3.org/2000/svg" class="band-svg" viewBox="0 150 1200 360" role="img" aria-label="机の上。ノートPC、ノートとペン、湯気の立つマグ、本に立てかけた横向きのスマホに白い目が2つ">
+      <figcaption class="band-copy">
+        <strong>となりで、見てる。</strong>
+        <span>邪魔はしない。目だけで、たまにひと言。</span>
+      </figcaption>
+<svg xmlns="http://www.w3.org/2000/svg" class="band-svg" viewBox="0 196 1200 314" role="img" aria-label="机の上。ノートPC、ノートとペン、湯気の立つマグ、本に立てかけた横向きのスマホに白い目が2つ">
   <defs>
     <radialGradient id="sc-spot" cx="50%" cy="38%" r="60%"><stop offset="0" stop-color="#fff" stop-opacity=".10"/><stop offset=".6" stop-color="#fff" stop-opacity=".03"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
     <radialGradient id="sc-glow" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fff" stop-opacity=".18"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
@@ -217,8 +225,8 @@ footer a { color: var(--dim); text-decoration: none; }
     </style>
   </defs>
 
-  <rect y="150" width="1200" height="360" fill="#000"/>
-  <rect y="150" width="1200" height="360" fill="url(#sc-spot)"/>
+  <rect y="196" width="1200" height="314" fill="#000"/>
+  <rect y="196" width="1200" height="314" fill="url(#sc-spot)"/>
 
   <!-- 机（手前に広がる台形）＋前板 -->
   <path d="M150 310 L1050 310 L1150 450 L50 450 Z" fill="url(#sc-desk)" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/>
