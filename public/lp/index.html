@@ -275,8 +275,14 @@ footer a { color: var(--dim); text-decoration: none; }
     <path d="M560 372 L760 372 L786 436 L522 436 Z" class="sc-top"/>
     <path d="M661 372 L654 436" class="sc-thin"/>
     <g class="sc-thin"><path d="M576 388 h70 M572 402 h66 M568 416 h58 M676 388 h70 M678 402 h54 M680 416 h40"/></g>
-    <path d="M700 428 L758 392" class="sc-ln" stroke-width="5"/>
-    <path d="M700 428 l-7 4 l3 -8" class="sc-ln"/>
+    <!-- ペン（軸・先端・クリップ） -->
+    <g transform="translate(690 410) rotate(-30)">
+      <rect x="-52" y="-6" width="92" height="12" rx="6" fill="#0a0a0c" stroke="#fff" stroke-width="2.5"/>
+      <path d="M40 -6 L58 -1 L58 1 L40 6 Z" fill="#15161a" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/>
+      <path d="M58 -1 L65 0 L58 1 Z" fill="#fff"/>
+      <path d="M-46 -6 v-3 h26 v3" class="sc-thin"/>
+      <line x1="30" y1="-6" x2="30" y2="6" stroke="#fff" stroke-width="1.5" stroke-opacity=".5"/>
+    </g>
   </g>
 
   <!-- マグ（右手前）＋湯気 -->
@@ -291,6 +297,7 @@ footer a { color: var(--dim); text-decoration: none; }
     <path class="sc-ln sc-steam b" d="M1084 356 q-8 -12 0 -24 q8 -12 0 -24" stroke-opacity=".5"/>
   </g>
 </svg>
+
 
 
 
