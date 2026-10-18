@@ -86,6 +86,7 @@ export function Eyes({ mood, eyeSize, pace = 3, demo, onPoke }: Props) {
   const taps = useRef<number[]>([])
   const pressTimer = useRef(0)
   const drowsy = useRef(false)
+  const spin = useRef({ angle: 0, acc: 0, at: 0, last: 0 })  // 指が目の周りを回った量
 
   // ---- ポーズを DOM に書く ----
   const set = (p: Partial<Pose>) => {
@@ -226,6 +227,21 @@ export function Eyes({ mood, eyeSize, pace = 3, demo, onPoke }: Props) {
       const cx = r.left + r.width / 2, cy = r.top + r.height / 2
       set({ px: clamp((p.clientX - cx) / (innerWidth / 2)), py: clamp((p.clientY - cy) / (innerHeight / 2)), t: 300, hold: 0 })
       const now = Date.now()
+      // 目の周りをぐるぐる回されたら目が回る（3秒以内に2周）
+      const sp = spin.current
+      const ang = Math.atan2(p.clientY - cy, p.clientX - cx)
+      if (now - sp.at > 3000 || now - sp.last > 600) { sp.acc = 0; sp.at = now }
+      else {
+        let d = ang - sp.angle
+        if (d > Math.PI) d -= 2 * Math.PI; else if (d < -Math.PI) d += 2 * Math.PI
+        if (Math.hypot(p.clientX - cx, p.clientY - cy) > r.width * .35) sp.acc += d
+      }
+      sp.angle = ang; sp.last = now
+      if (Math.abs(sp.acc) > Math.PI * 4 && now - sp.last < 1000) {
+        sp.acc = 0; sp.at = 0
+        if (perf.current?.interruptible) cancel()
+        if (!busy()) { perf.current = null; perform(B.dizzy); followUntil.current = now + 4000; return }
+      }
       if (now > followUntil.current) followStart.current = now
       followUntil.current = now + 2500
       if (now - followStart.current > 5000) { followStart.current = now; perform(B.petted) }
