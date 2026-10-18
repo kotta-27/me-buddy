@@ -264,15 +264,22 @@ export function Eyes({ mood, eyeSize, pace = 3, demo, onPoke, onApproach }: Prop
   useEffect(() => {
     const a = approach.current
     let rest = { cx: 0, cy: 0, w: 0, h: 0 }   // 静止位置（長押し開始時に測る）
+    let t0 = 0, raf = 0
+    // 長押しが続くほどゆっくり寄る（7秒で最大）。ただし指に近づきすぎない
     const moveTo = (x: number, y: number) => {
       const { cx, cy, w, h } = rest
-      // 指の方へ少しだけ（30%、最大 90px）寄る。目同士も寄せてコンパクトに
-      const lim = (v: number, m: number) => Math.max(-m, Math.min(m, v))
-      const ox = Math.max(w / 2 + 12 - cx, Math.min(innerWidth - w / 2 - 12 - cx, lim((x - cx) * .3, 90)))
-      const oy = Math.max(h / 2 + 12 - cy, Math.min(innerHeight - h / 2 - 12 - cy, lim((y - cy) * .3, 36)))
+      const u = Math.min(1, (Date.now() - t0) / 7000)
+      const k = .1 + .35 * (1 - Math.pow(1 - u, 2))           // 10% → 45%
+      let dx = (x - cx) * k, dy = (y - cy) * k
+      // 指との距離は「目の幅の半分 + 70px」を下回らない
+      const dist = Math.hypot(x - cx - dx, y - cy - dy), minD = w / 2 + 70
+      if (dist < minD) { const full = Math.hypot(x - cx, y - cy); const r = Math.max(0, full - minD) / (full || 1); dx = (x - cx) * r; dy = (y - cy) * r }
+      const ox = Math.max(w / 2 + 12 - cx, Math.min(innerWidth - w / 2 - 12 - cx, dx))
+      const oy = Math.max(h / 2 + 12 - cy, Math.min(innerHeight - h / 2 - 12 - cy, Math.max(-60, Math.min(36, dy))))
       const ang = Math.atan2(y - cy, x - cx)
-      set({ ox, oy, gap: .6, sx: .94, sy: .94, rot: Math.cos(ang) * 6, px: Math.max(-1, Math.min(1, (x - cx - ox) / 160)), py: Math.max(-1, Math.min(1, (y - cy - oy) / 120)), shape: a.onEyes ? 'happy' : 'idle', t: 700, hold: 0 })
+      set({ ox, oy, gap: 1 - .4 * u, sx: 1 - .06 * u, sy: 1 - .06 * u, rot: Math.cos(ang) * 6 * u, px: Math.max(-1, Math.min(1, (x - cx - ox) / 160)), py: Math.max(-1, Math.min(1, (y - cy - oy) / 120)), shape: a.onEyes ? 'happy' : 'idle', t: 160, hold: 0 })
     }
+    const loop = () => { if (!a.on) return; moveTo(a.x, a.y); raf = requestAnimationFrame(loop) }
     const pos = (e: PointerEvent | TouchEvent) => { const p = 'touches' in e ? e.touches[0] : e; return p ? [p.clientX, p.clientY] as const : null }
     const down = (e: PointerEvent) => {
       if ((e.target as Element).closest('button, dialog, .gear')) return
@@ -288,20 +295,20 @@ export function Eyes({ mood, eyeSize, pace = 3, demo, onPoke, onApproach }: Prop
         if (perf.current?.interruptible) cancel()
         if (busy()) { a.on = false; return }
         perf.current = { token: -1, interruptible: false }   // 他の演技をブロック
-        moveTo(a.x, a.y)
+        t0 = Date.now(); loop()
         if (!a.onEyes) onApproach?.()
       }, 420)
     }
     const move = (e: PointerEvent | TouchEvent) => {
       const p = pos(e); if (!p) return
       a.x = p[0]; a.y = p[1]
-      if (a.on) { a.onEyes = !!(document.elementFromPoint(p[0], p[1])?.closest('.eye')); moveTo(a.x, a.y) }
+      if (a.on) a.onEyes = !!(document.elementFromPoint(p[0], p[1])?.closest('.eye'))
       else if (a.timer && Math.hypot(p[0] - a.x, p[1] - a.y) > 12) { /* 動きすぎたら長押し扱いにしない */ }
     }
     const up = () => {
       clearTimeout(a.timer); a.timer = 0
       if (!a.on) return
-      a.on = false; perf.current = null
+      a.on = false; perf.current = null; cancelAnimationFrame(raf)
       set({ ox: 0, oy: 0, gap: 1, sx: 1, sy: 1, rot: 0, px: 0, py: 0, shape: 'idle', t: 700, hold: 0 })
       followUntil.current = Date.now() + 1200
     }
