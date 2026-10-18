@@ -117,6 +117,8 @@ export function App() {
   useEffect(() => {
     const s = loadSession()
     if (!s) return
+    const valid = Number.isFinite(s.startAt) && s.startAt > 0 && s.startAt <= Date.now() && Number.isFinite(s.lastTick) && s.lastTick >= s.startAt
+    if (!valid) { saveSession(null); return }
     const gap = Date.now() - s.lastTick
     if (gap < min(10)) {
       startAt.current = s.startAt
@@ -131,6 +133,7 @@ export function App() {
   }, [])
   useEffect(() => {
     if (mode !== 'focus') { saveSession(null); return }
+    if (!startAt.current) { startAt.current = Date.now(); nextNudge.current = startAt.current + min(cfg.interval); nextNod.current = startAt.current + min(25); scheduleChatter() }
     const id = setInterval(() => saveSession({ startAt: startAt.current, lastTick: Date.now() }), 5000)
     saveSession({ startAt: startAt.current, lastTick: Date.now() })
     return () => clearInterval(id)
