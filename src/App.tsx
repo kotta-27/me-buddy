@@ -38,6 +38,8 @@ export function App() {
   const nudgeAt = useRef(0)
   const nextNag = useRef(0)
   const milestones = useRef<Set<number>>(new Set())
+  const snoozes = useRef(0)
+  const started = useRef(false)
   const audio = useRef<AudioContext | null>(null)
   const hiddenAt = useRef(0)
   const talkTimer = useRef(0)
@@ -84,8 +86,8 @@ export function App() {
       wake()
       const gap = Date.now() - hiddenAt.current
       if (mode !== 'focus') return
-      if (hiddenAt.current && gap < 8000) { play('glanceUp'); say(L.notice(), { ms: 4500 }) }
-      else { play('welcome'); say(L.welcomeBack(), { happy: true, ms: 3000 }) }
+      if (hiddenAt.current && gap < 8000) { play('startle'); setTimeout(() => play('glanceUp'), 1900); say(L.notice(), { ms: 4500 }) }
+      else { play('bounce'); say(L.welcomeBack(), { ms: 3000 }) }
     }
     document.addEventListener('visibilitychange', onVis)
     return () => document.removeEventListener('visibilitychange', onVis)
@@ -169,7 +171,7 @@ export function App() {
     const v = seen.current, now = Date.now()
     setDark(s.dark)
     // 離席 / 帰席
-    if (v.present && !s.present) { v.present = false; say(L.away(), { ms: 2500 }); play('awayWait') }
+    if (v.present && !s.present) { v.present = false; say(L.away(), { ms: 2500 }); play('awayWait'); setTimeout(() => { if (!seen.current.present) play('droop') }, 8000) }
     else if (!v.present && s.present) { v.present = true; play('welcome') }
     if (s.dark && now - v.lastDark > min(10)) { v.lastDark = now; say(L.dark()) }
     if (s.face) lookAt(s.face)
@@ -198,7 +200,9 @@ export function App() {
     if (cfg.sound && !audio.current) { try { audio.current = new AudioContext() } catch { /* no audio */ } }
     setMode('focus'); setPhase('quiet')
     say(L.back(), { happy: true, ms: 2500 })
-    if (isMorning()) setTimeout(() => play('yawn'), 3000)
+    if (!started.current) { started.current = true; setTimeout(() => play('peek'), 2800) }
+    else if (isMorning()) setTimeout(() => play('yawn'), 3000)
+    snoozes.current = 0
     wake(); fullscreen(); motionPermission()
   }
   const motionPermission = () => {
@@ -208,7 +212,8 @@ export function App() {
   const snooze = () => {
     nextNudge.current = Date.now() + min(5)
     setPhase('quiet')
-    say(L.snoozed(), { ms: 1800 })
+    snoozes.current++
+    if (snoozes.current >= 3) { play('headShake'); say('もう…。5分だけね。', { ms: 2200 }) } else say(L.snoozed(), { ms: 1800 })
   }
   const startBreak = () => {
     const t = { day: today(), sec: total.sec + elapsed }
@@ -219,6 +224,7 @@ export function App() {
   }
   const resume = () => { play('wakeOneEye'); setTimeout(start, 900) }
   const stop = () => {
+    play('droop'); say(L.bye(), { ms: 2500 })
     const t = { day: today(), sec: total.sec + elapsed }
     setTotal(t); saveTotal(t)
     setMode('off'); setPhase('quiet'); hush()
@@ -229,12 +235,12 @@ export function App() {
   useEffect(() => {
     if (mode === 'focus' && phase === 'quiet') {
       if (now >= nextNudge.current) { setPhase('nudge'); nudgeAt.current = now; nextNag.current = now + min(3); say(L.nudge(Math.round(elapsed / 60)), { happy: true, hold: true }); notify() }
-      else for (const m of [60, 120, 180]) if (elapsed >= m * 60 && !milestones.current.has(m)) { milestones.current.add(m); say(L.milestone(m), { happy: true, ms: 3000 }) }
+      else for (const m of [60, 120, 180]) if (elapsed >= m * 60 && !milestones.current.has(m)) { milestones.current.add(m); play('bounce'); say(L.milestone(m), { ms: 3000 }) }
       else if (cfg.chatter && now >= nextChatter.current) { say(L.chatter()); scheduleChatter() }
       if (now >= nextNod.current) { nextNod.current = now + min(25); play('nod') }
     }
     if (mode === 'focus' && phase === 'nudge' && now >= nextNag.current) {
-      nextNag.current = now + min(3); play('sigh'); setTimeout(() => say(L.nag(), { hold: true }), 1500)
+      nextNag.current = now + min(3); play('grumpy'); setTimeout(() => say(L.nag(), { hold: true }), 800)
     }
     if (mode === 'break' && phase === 'quiet' && breakLeft <= 0) {
       setPhase('breakOver'); say(L.breakEnd(), { happy: true, hold: true }); notify()
@@ -258,6 +264,7 @@ export function App() {
         demo={demo}
         pace={cfg.pace}
         onPoke={() => { if (mode === 'focus' && phase === 'quiet') say(L.poke(), { ms: 1800 }) }}
+        onApproach={() => say(L.curious(), { ms: 2500 })}
       />
       <p class={`line ${line ? 'on' : ''}`} role="status" aria-live="polite">{line?.text ?? ''}</p>
 

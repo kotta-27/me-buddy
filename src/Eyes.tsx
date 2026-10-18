@@ -23,6 +23,7 @@ type Props = {
   pace?: 1 | 2 | 3         // しぐさの多さ
   demo?: boolean           // 演目の間隔を短くする（確認用）
   onPoke?: () => void
+  onApproach?: () => void  // 長押しで寄っていった時
 }
 
 /** 笑い目「^」。線幅一定、端丸め。ため息は 180° 回して「∪」 */
@@ -74,7 +75,7 @@ const Swirl = () => {
 const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms))
 
 /** 黒背景に目だけ。まばたき・視線の泳ぎ・ゆらぎ・指追い・演技。 */
-export function Eyes({ mood, eyeSize, pace = 3, demo, onPoke }: Props) {
+export function Eyes({ mood, eyeSize, pace = 3, demo, onPoke, onApproach }: Props) {
   const paceRef = useRef(pace); paceRef.current = pace
   const root = useRef<HTMLDivElement>(null)
   const pair = useRef<HTMLDivElement>(null)
@@ -103,6 +104,7 @@ export function Eyes({ mood, eyeSize, pace = 3, demo, onPoke }: Props) {
     if (p.rot !== undefined) el.style.setProperty('--rot', `${p.rot}deg`)
     if (p.tiltL !== undefined) el.style.setProperty('--tiltL', `${p.tiltL}deg`)
     if (p.tiltR !== undefined) el.style.setProperty('--tiltR', `${p.tiltR}deg`)
+    if (p.gap !== undefined) el.style.setProperty('--gapk', String(p.gap))
     if (p.shape) { el.classList.toggle('shape-happy', p.shape === 'happy'); el.classList.toggle('shape-sad', p.shape === 'sad'); el.classList.toggle('shape-cross', p.shape === 'cross') }
     if (p.swirl !== undefined) el.classList.toggle('swirl', p.swirl)
     if (p.spin !== undefined) el.classList.toggle('spin', p.spin)
@@ -118,7 +120,7 @@ export function Eyes({ mood, eyeSize, pace = 3, demo, onPoke }: Props) {
   }
   const base = (): Pose => {
     const m = moodRef.current
-    return { lid: m === 'closed' ? B.CLOSED : m === 'sleepy' ? .45 : 0, lidb: 0, px: 0, py: 0, ps: 1, sx: 1, sy: 1, ox: 0, oy: 0, rot: 0, tiltL: 0, tiltR: 0, shape: m === 'happy' ? 'happy' : 'idle', text: null, bubble: null, t: 400, hold: 0 }
+    return { lid: m === 'closed' ? B.CLOSED : m === 'sleepy' ? .45 : 0, lidb: 0, px: 0, py: 0, ps: 1, sx: 1, sy: 1, ox: 0, oy: 0, rot: 0, tiltL: 0, tiltR: 0, gap: 1, shape: m === 'happy' ? 'happy' : 'idle', text: null, bubble: null, t: 400, hold: 0 }
   }
 
   // ---- 演目再生 ----
@@ -251,7 +253,7 @@ export function Eyes({ mood, eyeSize, pace = 3, demo, onPoke }: Props) {
       }
       if (now > followUntil.current) followStart.current = now
       followUntil.current = now + 2500
-      if (now - followStart.current > 5000) { followStart.current = now; perform(B.petted) }
+      if (now - followStart.current > 5000) { followStart.current = now; perform(B.dreamy) }
     }
     window.addEventListener('pointermove', onMove)
     window.addEventListener('touchmove', onMove, { passive: true })
@@ -264,10 +266,12 @@ export function Eyes({ mood, eyeSize, pace = 3, demo, onPoke }: Props) {
     let rest = { cx: 0, cy: 0, w: 0, h: 0 }   // 静止位置（長押し開始時に測る）
     const moveTo = (x: number, y: number) => {
       const { cx, cy, w, h } = rest
-      // 指に 75% 寄る。画面からはみ出さない（静止位置基準）
-      const ox = Math.max(w / 2 + 12 - cx, Math.min(innerWidth - w / 2 - 12 - cx, (x - cx) * .75))
-      const oy = Math.max(h / 2 + 12 - cy, Math.min(innerHeight - h / 2 - 12 - cy, (y - cy) * .75))
-      set({ ox, oy, px: Math.max(-1, Math.min(1, (x - cx - ox) / 160)), py: Math.max(-1, Math.min(1, (y - cy - oy) / 120)), shape: a.onEyes ? 'happy' : 'idle', t: 650, hold: 0 })
+      // 指の方へ少しだけ（30%、最大 90px）寄る。目同士も寄せてコンパクトに
+      const lim = (v: number, m: number) => Math.max(-m, Math.min(m, v))
+      const ox = Math.max(w / 2 + 12 - cx, Math.min(innerWidth - w / 2 - 12 - cx, lim((x - cx) * .3, 90)))
+      const oy = Math.max(h / 2 + 12 - cy, Math.min(innerHeight - h / 2 - 12 - cy, lim((y - cy) * .3, 36)))
+      const ang = Math.atan2(y - cy, x - cx)
+      set({ ox, oy, gap: .6, sx: .94, sy: .94, rot: Math.cos(ang) * 6, px: Math.max(-1, Math.min(1, (x - cx - ox) / 160)), py: Math.max(-1, Math.min(1, (y - cy - oy) / 120)), shape: a.onEyes ? 'happy' : 'idle', t: 700, hold: 0 })
     }
     const pos = (e: PointerEvent | TouchEvent) => { const p = 'touches' in e ? e.touches[0] : e; return p ? [p.clientX, p.clientY] as const : null }
     const down = (e: PointerEvent) => {
@@ -285,6 +289,7 @@ export function Eyes({ mood, eyeSize, pace = 3, demo, onPoke }: Props) {
         if (busy()) { a.on = false; return }
         perf.current = { token: -1, interruptible: false }   // 他の演技をブロック
         moveTo(a.x, a.y)
+        if (!a.onEyes) onApproach?.()
       }, 420)
     }
     const move = (e: PointerEvent | TouchEvent) => {
@@ -297,7 +302,7 @@ export function Eyes({ mood, eyeSize, pace = 3, demo, onPoke }: Props) {
       clearTimeout(a.timer); a.timer = 0
       if (!a.on) return
       a.on = false; perf.current = null
-      set({ ox: 0, oy: 0, px: 0, py: 0, shape: 'idle', t: 700, hold: 0 })
+      set({ ox: 0, oy: 0, gap: 1, sx: 1, sy: 1, rot: 0, px: 0, py: 0, shape: 'idle', t: 700, hold: 0 })
       followUntil.current = Date.now() + 1200
     }
     window.addEventListener('pointerdown', down)

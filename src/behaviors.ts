@@ -9,6 +9,7 @@
  *  sx / sy            目全体の伸縮
  *  ox / oy            目のペアの移動 px（体ごと動く）
  *  rot                ペアの回転 deg（首かしげ）
+ *  gap                目と目の間隔の倍率（1 が通常。小さいとコンパクト）
  *  tiltL / tiltR      左右それぞれの目の傾き deg（眉の代わり。内側に倒すと怒り、外側で悲しみ）
  *  shape              'idle' | 'happy' | 'sad' | 'cross'（×目）
  *  swirl              頭上の渦巻き
@@ -23,7 +24,7 @@ export type Pose = {
   px?: number; py?: number; ps?: number
   sx?: number; sy?: number
   ox?: number; oy?: number; rot?: number
-  tiltL?: number; tiltR?: number
+  tiltL?: number; tiltR?: number; gap?: number
   shape?: 'idle' | 'happy' | 'sad' | 'cross'
   swirl?: boolean
   spin?: boolean
@@ -37,7 +38,7 @@ export type Base = { lid: number; shape: 'idle' | 'happy' }
 /** 「閉じた目」。完全に隠さず、下にひと筋残す */
 export const CLOSED = 0.93
 
-const R = { lid: 0, lidb: 0, px: 0, py: 0, ps: 1, sx: 1, sy: 1, ox: 0, oy: 0, rot: 0, tiltL: 0, tiltR: 0, shape: 'idle', swirl: false, spin: false, text: null, bubble: null } as const
+const R = { lid: 0, lidb: 0, px: 0, py: 0, ps: 1, sx: 1, sy: 1, ox: 0, oy: 0, rot: 0, tiltL: 0, tiltR: 0, gap: 1, shape: 'idle', swirl: false, spin: false, text: null, bubble: null } as const
 const reset = (t = 400, hold = 300): Pose => ({ ...R, t, hold })
 const jitter = (n: number, amp: number, key: 'px' | 'sx' | 'sy', t = 70): Performance =>
   Array.from({ length: n }, (_, i) => ({ [key]: (i % 2 ? 1 : -1) * amp + (key === 'px' ? 0 : 1), t, hold: t }))
@@ -249,16 +250,18 @@ export const peek: Performance = [
 ]
 export const bodySet = { startle, grumpy, droop, bounce, headTilt, lean, dreamy, noddingOff, headShake, peek }
 
-export const idleSet = { think, doze, lookAround, doubleTake, spaceOut, rubEyes, sigh, stretch }
+export const idleSet = { think, doze, lookAround, doubleTake, spaceOut, rubEyes, sigh, stretch, headTilt, lean, dreamy, noddingOff }
 export type IdleName = keyof typeof idleSet
 
 /** 待機演目を重み付きで選ぶ。直前と同じものは避ける。 */
 export function pickIdle(opts: { sleepy: boolean; night: boolean; last: IdleName | null }): IdleName {
   const w: Record<IdleName, number> = {
     think: 3, lookAround: 3, doubleTake: 2, spaceOut: 2, sigh: 2,
-    doze: opts.night ? 6 : opts.sleepy ? 4 : 2,
+    doze: opts.night ? 4 : opts.sleepy ? 3 : 2,
     rubEyes: opts.sleepy || opts.night ? 3 : 1,
     stretch: opts.sleepy ? 3 : 0,
+    headTilt: 2, lean: 3, dreamy: 1,
+    noddingOff: opts.night ? 5 : opts.sleepy ? 4 : 1,
   }
   if (opts.last) w[opts.last] = 0
   const total = Object.values(w).reduce((a, b) => a + b, 0)

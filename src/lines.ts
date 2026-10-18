@@ -25,4 +25,6 @@ export const milestone = (min: number) => pick([`${min}分。すごい。`, `${m
 export const resumed = () => 'つづきから。'
 export const welcomeBack = () => pick(['おかえり。', 'おかえり。つづきやろう。', 'もどってきたね。'])
 export const notice = () => pick(['何か来た？ 大事なものなら見たほうがいいと思うよ。', 'いまの、急ぎ？ 急ぎじゃないなら後でいいよ。', '通知？ 気になるなら見ておいで。'])
+export const curious = () => pick(['そっちに何かあるの？', 'なになに？', 'そっち、気になる。', 'ん？ そこ？'])
+export const bye = () => pick(['おつかれ。', 'またね。', 'よくやった。'])
 export const dark = () => pick(['暗くない？', '電気つけよ。'])
