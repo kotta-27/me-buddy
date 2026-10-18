@@ -86,8 +86,7 @@ export function Eyes({ mood, eyeSize, pace = 3, demo, onPoke }: Props) {
   const perf = useRef<{ token: number; interruptible: boolean } | null>(null)
   const lastIdle = useRef<B.IdleName | null>(null)
   const taps = useRef<number[]>([])
-  const pressTimer = useRef(0)
-  const drowsy = useRef(false)
+  const approach = useRef<{ on: boolean; onEyes: boolean; x: number; y: number; timer: number }>({ on: false, onEyes: false, x: 0, y: 0, timer: 0 })
   const spin = useRef({ angle: 0, acc: 0, at: 0, last: 0 })  // 指が目の周りを回った量
 
   // ---- ポーズを DOM に書く ----
@@ -225,7 +224,7 @@ export function Eyes({ mood, eyeSize, pace = 3, demo, onPoke }: Props) {
   useEffect(() => {
     const onMove = (e: PointerEvent | TouchEvent) => {
       if ((e.target as Element).closest('button, dialog')) return
-      if (moodRef.current === 'closed' || drowsy.current) return
+      if (moodRef.current === 'closed' || approach.current.on) return
       const p = 'touches' in e ? e.touches[0] : e
       const r = root.current?.getBoundingClientRect()
       if (!r || !p) return
@@ -259,6 +258,58 @@ export function Eyes({ mood, eyeSize, pace = 3, demo, onPoke }: Props) {
     return () => { window.removeEventListener('pointermove', onMove); window.removeEventListener('touchmove', onMove) }
   }, [eyeSize])
 
+  // どこでも長押し → 目が指の方へ寄っていく。指が目の上なら寄って ^ ^。離すと中央へ戻る
+  useEffect(() => {
+    const a = approach.current
+    let rest = { cx: 0, cy: 0, w: 0, h: 0 }   // 静止位置（長押し開始時に測る）
+    const moveTo = (x: number, y: number) => {
+      const { cx, cy, w, h } = rest
+      // 指に 75% 寄る。画面からはみ出さない（静止位置基準）
+      const ox = Math.max(w / 2 + 12 - cx, Math.min(innerWidth - w / 2 - 12 - cx, (x - cx) * .75))
+      const oy = Math.max(h / 2 + 12 - cy, Math.min(innerHeight - h / 2 - 12 - cy, (y - cy) * .75))
+      set({ ox, oy, px: Math.max(-1, Math.min(1, (x - cx - ox) / 160)), py: Math.max(-1, Math.min(1, (y - cy - oy) / 120)), shape: a.onEyes ? 'happy' : 'idle', t: 650, hold: 0 })
+    }
+    const pos = (e: PointerEvent | TouchEvent) => { const p = 'touches' in e ? e.touches[0] : e; return p ? [p.clientX, p.clientY] as const : null }
+    const down = (e: PointerEvent) => {
+      if ((e.target as Element).closest('button, dialog, .gear')) return
+      if (moodRef.current === 'closed') return
+      a.x = e.clientX; a.y = e.clientY
+      a.onEyes = !!(e.target as Element).closest('.eye')
+      clearTimeout(a.timer)
+      a.timer = window.setTimeout(() => {
+        const r = root.current?.getBoundingClientRect()
+        if (!r) return
+        rest = { cx: r.left + r.width / 2, cy: r.top + r.height / 2, w: r.width, h: r.height }
+        a.on = true
+        if (perf.current?.interruptible) cancel()
+        if (busy()) { a.on = false; return }
+        perf.current = { token: -1, interruptible: false }   // 他の演技をブロック
+        moveTo(a.x, a.y)
+      }, 420)
+    }
+    const move = (e: PointerEvent | TouchEvent) => {
+      const p = pos(e); if (!p) return
+      a.x = p[0]; a.y = p[1]
+      if (a.on) { a.onEyes = !!(document.elementFromPoint(p[0], p[1])?.closest('.eye')); moveTo(a.x, a.y) }
+      else if (a.timer && Math.hypot(p[0] - a.x, p[1] - a.y) > 12) { /* 動きすぎたら長押し扱いにしない */ }
+    }
+    const up = () => {
+      clearTimeout(a.timer); a.timer = 0
+      if (!a.on) return
+      a.on = false; perf.current = null
+      set({ ox: 0, oy: 0, px: 0, py: 0, shape: 'idle', t: 700, hold: 0 })
+      followUntil.current = Date.now() + 1200
+    }
+    window.addEventListener('pointerdown', down)
+    window.addEventListener('pointermove', move)
+    window.addEventListener('touchmove', move, { passive: true })
+    window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up); window.addEventListener('touchend', up)
+    return () => {
+      window.removeEventListener('pointerdown', down); window.removeEventListener('pointermove', move); window.removeEventListener('touchmove', move)
+      window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); window.removeEventListener('touchend', up)
+    }
+  }, [])
+
   // 振ると目が回る
   useEffect(() => {
     let last = 0
@@ -278,7 +329,6 @@ export function Eyes({ mood, eyeSize, pace = 3, demo, onPoke }: Props) {
     e.preventDefault()
     const now = Date.now()
     taps.current = [...taps.current.filter((t) => now - t < 1500), now]
-    pressTimer.current = window.setTimeout(() => { drowsy.current = true; perform(B.drowsyHold) }, 500)
     if (taps.current.length >= 3) { taps.current = []; perform(B.ticklish); return }
     if (perf.current?.interruptible) cancel()
     if (!busy()) {
@@ -288,10 +338,7 @@ export function Eyes({ mood, eyeSize, pace = 3, demo, onPoke }: Props) {
       onPoke?.()
     }
   }
-  const onUp = () => {
-    clearTimeout(pressTimer.current)
-    if (drowsy.current) { drowsy.current = false; perform(B.drowsyRelease) }
-  }
+  const onUp = () => { /* 長押しの解除は window 側で */ }
 
   return (
     <div ref={root} class={`eyes ${mood}`} aria-hidden="true" onPointerDown={onDown} onPointerUp={onUp} onPointerCancel={onUp} onPointerLeave={onUp}>
