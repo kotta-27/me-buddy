@@ -124,6 +124,13 @@ export const yawn: Performance = [
   { lid: 0, sy: 1.15, bubble: 'ふぁ', t: 300, hold: 900 },
   reset(300),
 ]
+/** 通知が来た？：上を見上げて少し首をかしげる */
+export const glanceUp: Performance = [
+  { px: 0, py: -1, sy: 1.04, t: 250, hold: 900 },
+  { px: .35, py: -1, t: 200, hold: 700 },
+  { px: 0, py: 0, t: 400, hold: 1500 },
+  reset(),
+]
 /** 離席中：キョロキョロしてから「…？」 */
 export const awayWait: Performance = [
   ...lookAround.slice(0, 3),

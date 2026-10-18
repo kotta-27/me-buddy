@@ -23,4 +23,6 @@ export const distracted = () => pick(['スマホ見てる？', 'こっち。', '
 export const nag = () => pick(['…休まない？', 'ねえ。', '目、しょぼしょぼしない？', 'ちょっとだけ。'])
 export const milestone = (min: number) => pick([`${min}分。すごい。`, `${min}分、やったね。`, `もう${min}分。`])
 export const resumed = () => 'つづきから。'
+export const welcomeBack = () => pick(['おかえり。', 'おかえり。つづきやろう。', 'もどってきたね。'])
+export const notice = () => pick(['何か来た？ 大事なものなら見たほうがいいと思うよ。', 'いまの、急ぎ？ 急ぎじゃないなら後でいいよ。', '通知？ 気になるなら見ておいで。'])
 export const dark = () => pick(['暗くない？', '電気つけよ。'])

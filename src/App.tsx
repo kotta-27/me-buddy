@@ -39,6 +39,7 @@ export function App() {
   const nextNag = useRef(0)
   const milestones = useRef<Set<number>>(new Set())
   const audio = useRef<AudioContext | null>(null)
+  const hiddenAt = useRef(0)
   const talkTimer = useRef(0)
   const lock = useRef<WakeLockSentinel | null>(null)
   const cam = useRef<Camera | null>(null)
@@ -76,10 +77,15 @@ export function App() {
     try { lock.current = await navigator.wakeLock.request('screen') } catch { /* denied */ }
   }
   useEffect(() => {
+    // 画面から離れて戻った時。短い（8秒未満）なら通知を見たと判断して上を見る。長ければ「おかえり」
     const onVis = () => {
-      if (document.visibilityState !== 'visible' || mode === 'off') return
+      if (document.visibilityState === 'hidden') { hiddenAt.current = Date.now(); return }
+      if (mode === 'off') return
       wake()
-      if (mode === 'focus') play('welcome')
+      const gap = Date.now() - hiddenAt.current
+      if (mode !== 'focus') return
+      if (hiddenAt.current && gap < 8000) { play('glanceUp'); say(L.notice(), { ms: 4500 }) }
+      else { play('welcome'); say(L.welcomeBack(), { happy: true, ms: 3000 }) }
     }
     document.addEventListener('visibilitychange', onVis)
     return () => document.removeEventListener('visibilitychange', onVis)
