@@ -214,7 +214,7 @@ dialog form { display: flex; flex-direction: column; gap: 14px; }
   .hint { display: none; }
   .row { position: absolute; top: -4px; right: 0; margin: 0; }
   .row button { height: 36px; font-size: 13px; padding: 0 16px; }
-  .preview { margin-top: auto; justify-content: flex-start; }
+  .preview { flex: 1; min-height: 0; align-items: center; justify-content: center; }
   .pv-device { max-width: 220px; }
   .pv-pair { transform: scale(.3); }
   dialog h2 { justify-content: flex-start; gap: 12px; }
