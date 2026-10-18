@@ -69,8 +69,9 @@ nav ul a:hover { color: var(--fg); }
   box-shadow: 0 40px 90px rgba(0,0,0,.75), inset 0 0 0 1.5px #4a4a50, 0 0 0 1px #000;
   transform: rotateX(6deg) rotateY(-8deg); transform-origin: 50% 100%;
 }
-.device::before { content: ''; position: absolute; right: -2.5px; top: 28%; width: 2.5px; height: 14%; border-radius: 2px; background: #4a4a50; }  /* 電源 */
-.device::after { content: ''; position: absolute; left: -2.5px; top: 24%; width: 2.5px; height: 9%; border-radius: 2px; background: #4a4a50; box-shadow: 0 52px 0 #4a4a50; }  /* 音量 */
+/* 縦持ちで右＝電源、左＝音量。横向き（本体の上が左）にすると電源は上辺、音量は下辺 */
+.device::before { content: ''; position: absolute; top: -2.5px; left: 22%; width: 13%; height: 2.5px; border-radius: 2px; background: #4a4a50; }  /* 電源 */
+.device::after { content: ''; position: absolute; bottom: -2.5px; left: 20%; width: 8%; height: 2.5px; border-radius: 2px; background: #4a4a50; box-shadow: calc(100% + 14px) 0 0 #4a4a50; }  /* 音量 ×2 */
 .island { position: absolute; left: 18px; top: 50%; width: 9px; height: 84px; margin-top: -42px; border-radius: 5px; background: #000; z-index: 2; box-shadow: 0 0 0 1px #151515; }
 .phone { position: relative; width: 100%; height: 100%; border-radius: 27px; overflow: hidden; background: #000; }
 @media (max-width: 800px) { .device { transform: none; } .desk { padding: 8px 0 24px; } }
