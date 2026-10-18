@@ -1,6 +1,5 @@
 import { useEffect, useRef } from 'preact/hooks'
 import type { Config } from './store'
-import type { CameraLevel } from './camera'
 
 type Props = {
   open: boolean
@@ -59,13 +58,6 @@ export function Settings({ open, cfg, onChange, onClose, onReset }: Props) {
             <option value={1}>少なめ（2〜5分に1回）</option>
             <option value={2}>ふつう（1分前後に1回）</option>
             <option value={3}>多め（10〜30秒に1回）</option>
-          </select>
-        </label>
-        <label>カメラで様子を見る（映像は表示も送信もしない）
-          <select id="s-camera" value={cfg.camera} onChange={(e) => onChange({ ...cfg, camera: (e.target as HTMLSelectElement).value as CameraLevel })}>
-            <option value="off">使わない</option>
-            <option value="presence">在席と明るさだけ（軽い）</option>
-            <option value="face">顔も見る（目で追う・居眠り・あくび）</option>
           </select>
         </label>
         </div>

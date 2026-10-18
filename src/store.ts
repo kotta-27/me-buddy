@@ -1,7 +1,4 @@
-import type { CameraLevel } from './camera'
-
 export type Config = {
-  camera: CameraLevel // カメラで様子を見る
   interval: number  // 休憩を誘う間隔（分）
   pace: 1 | 2 | 3   // しぐさの多さ 1 少なめ / 2 ふつう / 3 多め
   breakLen: number  // 休憩の長さ（分）
@@ -15,7 +12,7 @@ export type Config = {
 }
 
 export const defaultConfig: Config = {
-  interval: 50, breakLen: 5, eyeSize: 100, eyeGap: 80, chatter: true, wake: true, camera: 'off', sound: false, vibrate: true, brightness: 100, pace: 3,
+  interval: 50, breakLen: 5, eyeSize: 100, eyeGap: 80, chatter: true, wake: true, sound: false, vibrate: true, brightness: 100, pace: 3,
 }
 
 export type Total = { day: string; sec: number }

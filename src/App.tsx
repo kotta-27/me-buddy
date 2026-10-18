@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'preact/hooks'
-import { Eyes, play, lookAt, type Mood } from './Eyes'
-import { Camera, type Sense } from './camera'
+import { Eyes, play, type Mood } from './Eyes'
 import { isMorning } from './behaviors'
 import { Settings } from './Settings'
 import * as L from './lines'
@@ -44,10 +43,6 @@ export function App() {
   const hiddenAt = useRef(0)
   const talkTimer = useRef(0)
   const lock = useRef<WakeLockSentinel | null>(null)
-  const cam = useRef<Camera | null>(null)
-  const [camOn, setCamOn] = useState(false)
-  const [dark, setDark] = useState(false)
-  const seen = useRef({ present: true, closedSince: 0, turnedSince: 0, lastYawn: 0, lastSmile: 0, lastDark: 0, lastAsleep: 0, lastDistract: 0 })
 
   // ---- config -> css vars + storage ----
   useEffect(() => {
@@ -157,38 +152,6 @@ export function App() {
     return () => window.removeEventListener('keydown', onKey)
   })
 
-  // ---- camera ----
-  const camera = () => {
-    if (!cam.current) {
-      cam.current = new Camera()
-      cam.current.onError = (m) => say(m, { ms: 3000 })
-      cam.current.onSense = onSense
-    }
-    return cam.current
-  }
-  useEffect(() => {
-    if (mode === 'off' || cfg.camera === 'off') { cam.current?.stop(); setCamOn(false); setDark(false); return }
-    camera().start(cfg.camera).then(() => setCamOn(camera().on))
-  }, [cfg.camera, mode])
-  const onSense = (s: Sense) => {
-    const v = seen.current, now = Date.now()
-    setDark(s.dark)
-    // 離席 / 帰席
-    if (v.present && !s.present) { v.present = false; say(L.away(), { ms: 2500 }); play('awayWait'); setTimeout(() => { if (!seen.current.present) play('droop') }, 8000) }
-    else if (!v.present && s.present) { v.present = true; play('welcome') }
-    if (s.dark && now - v.lastDark > min(10)) { v.lastDark = now; say(L.dark()) }
-    if (s.face) lookAt(s.face)
-    // 居眠り：2秒以上目を閉じたまま
-    if (s.eyesClosed) { if (!v.closedSince) v.closedSince = now; else if (now - v.closedSince > 2000 && now - v.lastAsleep > 30_000) { v.lastAsleep = now; v.closedSince = 0; say(L.asleep(), { ms: 3000 }); play('doubleTake') } }
-    else v.closedSince = 0
-    if (s.yawn && now - v.lastYawn > 20_000) { v.lastYawn = now; play('yawn'); say(L.yawned(), { ms: 2500 }) }
-    if (s.smile && now - v.lastSmile > 15_000) { v.lastSmile = now; play('petted') }
-    // よそ見 30 秒
-    if (s.turned) { if (!v.turnedSince) v.turnedSince = now; else if (now - v.turnedSince > 30_000 && now - v.lastDistract > 60_000) { v.lastDistract = now; v.turnedSince = 0; play('ticklish'); say(L.distracted(), { ms: 3000 }) } }
-    else v.turnedSince = 0
-  }
-  useEffect(() => () => cam.current?.stop(), [])
-
   // ---- session ----
   const scheduleChatter = () => {
     const [lo, hi] = { 1: [15, 30], 2: [8, 18], 3: [3, 7] }[cfg.pace]
@@ -253,7 +216,7 @@ export function App() {
   const mood: Mood =
     line?.happy ? 'happy'
     : mode === 'break' && phase === 'quiet' ? 'closed'
-    : mode === 'focus' && (elapsed > 90 * 60 || dark) && !line ? 'sleepy'
+    : mode === 'focus' && elapsed > 90 * 60 && !line ? 'sleepy'
     : 'idle'
 
   const todaySec = total.sec + elapsed
@@ -282,7 +245,7 @@ export function App() {
       </div>
 
       <footer class="foot">
-        <span><span class={`cam ${camOn ? 'on' : ''}`} aria-label={camOn ? 'カメラ使用中' : ''}></span>{clock}</span>
+        <span>{clock}</span>
         <span>{todaySec >= 60 ? `今日 ${fmtH(todaySec)}` : ''}</span>
       </footer>
 

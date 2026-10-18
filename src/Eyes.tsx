@@ -15,8 +15,6 @@ const cues = {
   ticklish: B.ticklish, petted: B.petted, sleepTalk: B.sleepTalk, awayWait: B.awayWait, glanceUp: B.glanceUp,
 } satisfies Record<string, Performance>
 export type Cue = keyof typeof cues
-/** カメラが見つけた顔の方を見る。x,y は -1〜1。null で解除 */
-export const lookAt = (p: { x: number; y: number } | null) => eyesBus.dispatchEvent(new CustomEvent('look', { detail: p }))
 
 type Props = {
   mood: Mood
@@ -160,14 +158,7 @@ export function Eyes({ mood, eyeSize, pace = 3, demo, onPoke, onApproach, onBuzz
   useEffect(() => {
     const on = (e: Event) => { const name = (e as CustomEvent<Cue>).detail; if (cues[name]) perform(cues[name]) }
     eyesBus.addEventListener('play', on)
-    const onLook = (e: Event) => {
-      const p = (e as CustomEvent<{ x: number; y: number } | null>).detail
-      if (!p || busy() || moodRef.current === 'closed') return
-      set({ px: Math.max(-1, Math.min(1, p.x)), py: Math.max(-1, Math.min(1, p.y * .6)), t: 600, hold: 0 })
-      followUntil.current = Date.now() + 1500
-    }
-    eyesBus.addEventListener('look', onLook)
-    return () => { eyesBus.removeEventListener('play', on); eyesBus.removeEventListener('look', onLook) }
+    return () => eyesBus.removeEventListener('play', on)
   }, [])
 
   useEffect(() => {
