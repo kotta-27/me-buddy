@@ -9,6 +9,7 @@ export const eyesBus = new EventTarget()
 export const play = (name: Cue) => eyesBus.dispatchEvent(new CustomEvent('play', { detail: name }))
 const cues = {
   ...B.idleSet,
+  ...B.bodySet,
   welcome: B.welcome, yawn: B.yawn, nod: B.nod, wakeOneEye: B.wakeOneEye, dizzy: B.dizzy,
   ticklish: B.ticklish, petted: B.petted, sleepTalk: B.sleepTalk, awayWait: B.awayWait, glanceUp: B.glanceUp,
 } satisfies Record<string, Performance>
@@ -76,6 +77,7 @@ const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms))
 export function Eyes({ mood, eyeSize, pace = 3, demo, onPoke }: Props) {
   const paceRef = useRef(pace); paceRef.current = pace
   const root = useRef<HTMLDivElement>(null)
+  const pair = useRef<HTMLDivElement>(null)
   const text = useRef<HTMLDivElement>(null)
   const bubble = useRef<HTMLDivElement>(null)
   const moodRef = useRef(mood); moodRef.current = mood
@@ -97,6 +99,11 @@ export function Eyes({ mood, eyeSize, pace = 3, demo, onPoke }: Props) {
     if (p.lid !== undefined) { v('--lidL', p.lid); v('--lidR', p.lid) }
     v('--lidL', p.lidL); v('--lidR', p.lidR); v('--lidb', p.lidb)
     v('--px', p.px); v('--py', p.py); v('--ps', p.ps); v('--sx', p.sx); v('--sy', p.sy)
+    if (p.ox !== undefined) el.style.setProperty('--ox', `${p.ox}px`)
+    if (p.oy !== undefined) el.style.setProperty('--oy', `${p.oy}px`)
+    if (p.rot !== undefined) el.style.setProperty('--rot', `${p.rot}deg`)
+    if (p.tiltL !== undefined) el.style.setProperty('--tiltL', `${p.tiltL}deg`)
+    if (p.tiltR !== undefined) el.style.setProperty('--tiltR', `${p.tiltR}deg`)
     if (p.shape) { el.classList.toggle('shape-happy', p.shape === 'happy'); el.classList.toggle('shape-sad', p.shape === 'sad'); el.classList.toggle('shape-cross', p.shape === 'cross') }
     if (p.swirl !== undefined) el.classList.toggle('swirl', p.swirl)
     if (p.spin !== undefined) el.classList.toggle('spin', p.spin)
@@ -112,7 +119,7 @@ export function Eyes({ mood, eyeSize, pace = 3, demo, onPoke }: Props) {
   }
   const base = (): Pose => {
     const m = moodRef.current
-    return { lid: m === 'closed' ? B.CLOSED : m === 'sleepy' ? .45 : 0, lidb: 0, px: 0, py: 0, ps: 1, sx: 1, sy: 1, shape: m === 'happy' ? 'happy' : 'idle', text: null, bubble: null, t: 400, hold: 0 }
+    return { lid: m === 'closed' ? B.CLOSED : m === 'sleepy' ? .45 : 0, lidb: 0, px: 0, py: 0, ps: 1, sx: 1, sy: 1, ox: 0, oy: 0, rot: 0, tiltL: 0, tiltR: 0, shape: m === 'happy' ? 'happy' : 'idle', text: null, bubble: null, t: 400, hold: 0 }
   }
 
   // ---- 演目再生 ----
@@ -206,7 +213,7 @@ export function Eyes({ mood, eyeSize, pace = 3, demo, onPoke }: Props) {
       if (!alive) return
       t += moodRef.current === 'closed' ? .02 : .012
       const amp = moodRef.current === 'closed' ? 5 : 8
-      if (root.current) root.current.style.transform = `translateY(${Math.sin(t) * amp}px) scaleY(${1 + Math.sin(t) * .012})`
+      if (pair.current) pair.current.style.transform = `translateY(${Math.sin(t) * amp}px) scaleY(${1 + Math.sin(t) * .012})`
       raf = requestAnimationFrame(drift)
     }
     if (!reduce) drift()
@@ -291,8 +298,10 @@ export function Eyes({ mood, eyeSize, pace = 3, demo, onPoke }: Props) {
       <div ref={text} class="mumble"></div>
       <div ref={bubble} class="bubble"><Cloud /></div>
       <Swirl />
-      <div class="eye"><div class="pupil" /><Arc /><Cross /></div>
-      <div class="eye"><div class="pupil" /><Arc /><Cross /></div>
+      <div ref={pair} class="pair">
+        <div class="eye"><div class="pupil" /><Arc /><Cross /></div>
+        <div class="eye"><div class="pupil" /><Arc /><Cross /></div>
+      </div>
     </div>
   )
 }

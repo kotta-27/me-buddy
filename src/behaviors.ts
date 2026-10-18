@@ -7,6 +7,9 @@
  *  px / py            瞳の位置 -1〜1
  *  ps                 瞳の大きさ倍率
  *  sx / sy            目全体の伸縮
+ *  ox / oy            目のペアの移動 px（体ごと動く）
+ *  rot                ペアの回転 deg（首かしげ）
+ *  tiltL / tiltR      左右それぞれの目の傾き deg（眉の代わり。内側に倒すと怒り、外側で悲しみ）
  *  shape              'idle' | 'happy' | 'sad' | 'cross'（×目）
  *  swirl              頭上の渦巻き
  *  spin               瞳が円を描いて回る（CSS アニメ）
@@ -19,6 +22,8 @@ export type Pose = {
   lid?: number; lidL?: number; lidR?: number; lidb?: number
   px?: number; py?: number; ps?: number
   sx?: number; sy?: number
+  ox?: number; oy?: number; rot?: number
+  tiltL?: number; tiltR?: number
   shape?: 'idle' | 'happy' | 'sad' | 'cross'
   swirl?: boolean
   spin?: boolean
@@ -32,7 +37,7 @@ export type Base = { lid: number; shape: 'idle' | 'happy' }
 /** 「閉じた目」。完全に隠さず、下にひと筋残す */
 export const CLOSED = 0.93
 
-const R = { lid: 0, lidb: 0, px: 0, py: 0, ps: 1, sx: 1, sy: 1, shape: 'idle', swirl: false, spin: false, text: null, bubble: null } as const
+const R = { lid: 0, lidb: 0, px: 0, py: 0, ps: 1, sx: 1, sy: 1, ox: 0, oy: 0, rot: 0, tiltL: 0, tiltR: 0, shape: 'idle', swirl: false, spin: false, text: null, bubble: null } as const
 const reset = (t = 400, hold = 300): Pose => ({ ...R, t, hold })
 const jitter = (n: number, amp: number, key: 'px' | 'sx' | 'sy', t = 70): Performance =>
   Array.from({ length: n }, (_, i) => ({ [key]: (i % 2 ? 1 : -1) * amp + (key === 'px' ? 0 : 1), t, hold: t }))
@@ -162,6 +167,87 @@ export const sleepyBlink: Performance = [
   { lid: CLOSED, t: 260, hold: 180 },
   { lid: 0, t: 320, hold: 0 },
 ]
+
+// ---- 体ごと動く・表情（候補）----
+/** びっくり：跳ね上がって見開き、瞳が小さく「！」 */
+export const startle: Performance = [
+  { oy: -46, sx: 1.18, sy: 1.22, ps: .55, px: 0, py: 0, bubble: '！', t: 90, hold: 500 },
+  { oy: -30, sx: 1.1, sy: 1.12, ps: .7, bubble: '！', t: 200, hold: 500 },
+  { oy: 0, sx: 1, sy: 1, ps: 1, bubble: null, t: 350, hold: 800 },
+  reset(),
+]
+/** むっ：目が内側に傾いて細まり、瞳が寄る */
+export const grumpy: Performance = [
+  { tiltL: 16, tiltR: -16, sy: .72, ps: .85, px: 0, py: .1, t: 250, hold: 1600 },
+  { tiltL: 16, tiltR: -16, sy: .72, ps: .85, px: .4, py: .1, t: 200, hold: 900 },
+  reset(400),
+]
+/** しょんぼり：外側に傾いて沈み、瞳が下を向く。「…」 */
+export const droop: Performance = [
+  { tiltL: -14, tiltR: 14, oy: 22, py: .7, lid: .25, t: 600, hold: 1200 },
+  { tiltL: -14, tiltR: 14, oy: 22, py: .7, lid: .25, bubble: '…', t: 0, hold: 1600 },
+  reset(500),
+]
+/** ぴょんぴょん：ゼリーみたいに弾む */
+export const bounce: Performance = [
+  { oy: 10, sx: 1.12, sy: .86, t: 120, hold: 0 },
+  { oy: -42, sx: .92, sy: 1.14, t: 220, hold: 60 },
+  { oy: 8, sx: 1.12, sy: .86, t: 240, hold: 0 },
+  { oy: -30, sx: .95, sy: 1.08, t: 200, hold: 40 },
+  { oy: 6, sx: 1.08, sy: .9, t: 220, hold: 0 },
+  { oy: -14, sx: 1, sy: 1.02, t: 180, hold: 40 },
+  { oy: 0, sx: 1, sy: 1, shape: 'happy', t: 160, hold: 900 },
+  reset(300),
+]
+/** 首かしげ：ペアごと傾いて「？」 */
+export const headTilt: Performance = [
+  { rot: 14, ox: 10, px: .5, py: -.3, t: 450, hold: 900 },
+  { rot: 14, ox: 10, px: .5, py: -.3, bubble: '？', t: 0, hold: 1300 },
+  { rot: -6, ox: -4, px: -.3, py: 0, t: 400, hold: 500 },
+  reset(400),
+]
+/** 体ごと見回す：ペアが左右にスライド、瞳が先行 */
+export const lean: Performance = [
+  { px: -.9, t: 150, hold: 80 },
+  { ox: -70, rot: -6, px: -.9, t: 450, hold: 700 },
+  { px: .9, t: 150, hold: 80 },
+  { ox: 70, rot: 6, px: .9, t: 600, hold: 700 },
+  { ox: 0, rot: 0, px: 0, py: 0, t: 450, hold: 400 },
+  reset(),
+]
+/** うっとり：半目で沈んで、ゆらゆら */
+export const dreamy: Performance = [
+  { lid: .45, oy: 8, rot: 4, py: .2, t: 700, hold: 900 },
+  { lid: .45, oy: 8, rot: -4, py: .2, t: 1200, hold: 900 },
+  { lid: .45, oy: 8, rot: 4, py: .2, t: 1200, hold: 900 },
+  reset(600),
+]
+/** 寝落ち：まぶたが落ちながら傾いて沈む → ガクッと戻る */
+export const noddingOff: Performance = [
+  { lid: .4, oy: 6, rot: 3, t: 1200, hold: 400 },
+  { lid: .75, oy: 20, rot: 9, t: 1500, hold: 300 },
+  { lid: .9, oy: 34, rot: 14, t: 1200, hold: 200 },
+  { lid: 0, oy: -10, rot: -2, sx: 1.05, sy: 1.1, t: 90, hold: 700 },
+  { lid: 0, oy: 0, rot: 0, sx: 1, sy: 1, px: .6, t: 250, hold: 500 },
+  { px: -.5, t: 200, hold: 500 },
+  reset(),
+]
+/** いやいや：ペアが小刻みに横に振れる、目は「∪」 */
+export const headShake: Performance = [
+  { shape: 'sad', t: 120, hold: 60 },
+  ...Array.from({ length: 6 }, (_, i) => ({ shape: 'sad' as const, ox: (i % 2 ? -1 : 1) * 16, t: 110, hold: 20 })),
+  { shape: 'sad', ox: 0, t: 150, hold: 500 },
+  reset(300),
+]
+/** のぞきこむ：伸び上がって大きくなり、上から見下ろす */
+export const peek: Performance = [
+  { oy: -36, sx: 1.14, sy: 1.14, py: .9, t: 500, hold: 900 },
+  { oy: -36, sx: 1.14, sy: 1.14, py: .9, px: .5, t: 300, hold: 600 },
+  { oy: -36, sx: 1.14, sy: 1.14, py: .9, px: -.5, t: 400, hold: 600 },
+  { oy: 0, sx: 1, sy: 1, px: 0, py: 0, t: 400, hold: 300 },
+  reset(),
+]
+export const bodySet = { startle, grumpy, droop, bounce, headTilt, lean, dreamy, noddingOff, headShake, peek }
 
 export const idleSet = { think, doze, lookAround, doubleTake, spaceOut, rubEyes, sigh, stretch }
 export type IdleName = keyof typeof idleSet

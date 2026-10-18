@@ -40,7 +40,11 @@ body {
   position: relative;
   display: flex; gap: var(--eye-gap); touch-action: none;
   --t: 400ms; --lidL: 0; --lidR: 0; --lidb: 0; --px: 0; --py: 0; --ps: 1; --sx: 1; --sy: 1;
+  --ox: 0px; --oy: 0px; --rot: 0deg; --tiltL: 0deg; --tiltR: 0deg;
+  transform: translate(var(--ox), var(--oy)) rotate(var(--rot));
+  transition: transform var(--t) cubic-bezier(.3, .9, .3, 1.1);
 }
+.pair { display: flex; gap: var(--eye-gap); }
 .eye {
   position: relative;
   width: var(--eye-w);
@@ -49,12 +53,12 @@ body {
   background: var(--fg);
   overflow: hidden;
   transform-origin: center;
-  transform: scale(var(--sx), var(--sy));
+  transform: rotate(var(--tiltL)) scale(var(--sx), var(--sy));
   /* まぶたは楕円そのものを上下から削る（板を重ねると縁がにじむ） */
   clip-path: inset(calc(var(--lidL) * 100%) 0 calc(var(--lidb) * 100%) 0);
   transition: transform var(--t) ease, clip-path var(--t) ease, background .15s ease;
 }
-.eye:last-child { clip-path: inset(calc(var(--lidR) * 100%) 0 calc(var(--lidb) * 100%) 0); }
+.eye:last-child { clip-path: inset(calc(var(--lidR) * 100%) 0 calc(var(--lidb) * 100%) 0); transform: rotate(var(--tiltR)) scale(var(--sx), var(--sy)); }
 .pupil {
   position: absolute; left: 30%; top: 35%; width: 40%; height: 35%;
   border-radius: 50%; background: var(--bg);
@@ -62,8 +66,8 @@ body {
   transition: transform var(--t) cubic-bezier(.2, .8, .2, 1);
   pointer-events: none;
 }
-.eyes.blink .eye { transform: scale(var(--sx), .06); transition: transform .12s ease; }
-.eyes.wink .eye:last-child { transform: scale(var(--sx), .06); transition: transform .12s ease; }
+.eyes.blink .eye { transform: rotate(var(--tiltL)) scale(var(--sx), .06); transition: transform .12s ease; }
+.eyes.blink .eye:last-child, .eyes.wink .eye:last-child { transform: rotate(var(--tiltR)) scale(var(--sx), .06); transition: transform .12s ease; }
 .eyes.shape-happy .eye, .eyes.shape-sad .eye, .eyes.shape-cross .eye { background: transparent; overflow: visible; clip-path: none; }
 .eyes.shape-happy .pupil, .eyes.shape-sad .pupil, .eyes.shape-cross .pupil { visibility: hidden; }
 .arc {
