@@ -117,6 +117,7 @@ export function App() {
 
   // ---- 途中で閉じた分を復元 ----
   useEffect(() => {
+    if (demo) { start(); return }   // デモ（LP の埋め込み）は自動で開始
     const s = loadSession()
     if (!s) return
     const valid = Number.isFinite(s.startAt) && s.startAt > 0 && s.startAt <= Date.now() && Number.isFinite(s.lastTick) && s.lastTick >= s.startAt
@@ -135,6 +136,7 @@ export function App() {
   }, [])
   useEffect(() => {
     if (mode !== 'focus') { saveSession(null); return }
+    if (demo) return   // デモでは復元用の保存をしない（本体と localStorage を共有するため）
     if (!startAt.current) { startAt.current = Date.now(); nextNudge.current = startAt.current + min(cfg.interval); nextNod.current = startAt.current + min(25); scheduleChatter() }
     const id = setInterval(() => saveSession({ startAt: startAt.current, lastTick: Date.now() }), 5000)
     saveSession({ startAt: startAt.current, lastTick: Date.now() })
@@ -203,7 +205,7 @@ export function App() {
     if (!started.current) { started.current = true; setTimeout(() => play('peek'), 2800) }
     else if (isMorning()) setTimeout(() => play('yawn'), 3000)
     snoozes.current = 0
-    wake(); fullscreen(); motionPermission()
+    if (!demo) { wake(); fullscreen(); motionPermission() }
   }
   const motionPermission = () => {
     const D = DeviceMotionEvent as unknown as { requestPermission?: () => Promise<string> }
@@ -283,7 +285,7 @@ export function App() {
         <span>{todaySec >= 60 ? `今日 ${fmtH(todaySec)}` : ''}</span>
       </footer>
 
-      <button type="button" class="gear" aria-label="設定" onClick={() => setOpen(true)}>·</button>
+      {!demo && <button type="button" class="gear" aria-label="設定" onClick={() => setOpen(true)}>·</button>}
 
       <Settings
         open={open}
@@ -295,7 +297,7 @@ export function App() {
         onClose={() => setOpen(false)}
         onReset={() => { const t = { day: today(), sec: 0 }; setTotal(t); saveTotal(t) }}
       />
-      {mode !== 'off' && (
+      {mode !== 'off' && !demo && (
         <button type="button" class="gear" style="right:auto;left:12px;font-size:14px;letter-spacing:.2em" onClick={stop}>終了</button>
       )}
     </main>
