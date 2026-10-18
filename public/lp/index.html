@@ -8,7 +8,8 @@
 <meta name="description" content="黒い画面に、目だけ。ぱちっとまばたきする、勉強や作業の相棒。横向きのスマホを机の端に。">
 <meta property="og:title" content="pachi">
 <meta property="og:description" content="黒い画面に、目だけ。勉強や作業の相棒。">
-<meta property="og:image" content="https://kotta-27.github.io/pachi/lp/img/01-idle.png">
+<meta property="og:image" content="https://kotta-27.github.io/pachi/lp/img/og.png">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/svg+xml" href="../icon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&family=Nunito:wght@700;800&display=swap">
@@ -34,7 +35,16 @@ section { padding-block: 72px; border-top: 1px solid var(--line); }
 /* nav */
 nav { position: sticky; top: 0; z-index: 10; background: rgba(0,0,0,.85); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
 nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 56px; }
-.logo { display: flex; align-items: center; gap: 10px; font-family: var(--latin); font-weight: 800; font-size: 20px; letter-spacing: .06em; text-decoration: none; }
+.logo { display: flex; align-items: center; text-decoration: none; color: var(--fg); }
+.wm { height: 30px; width: 78px; color: var(--fg); display: block; flex: none; }
+.wm.wm-s { height: 20px; width: 52px; }
+@keyframes wm-blink { 0%, 93%, 100% { transform: scaleY(1); } 96% { transform: scaleY(.08); } }
+.wm-eye { transform-box: fill-box; transform-origin: center; animation: wm-blink 5s ease-in-out infinite; }
+.wm-eye:last-of-type { animation-delay: .05s; }
+.wm-smile { opacity: 0; transition: opacity .15s ease; }
+.logo:hover .wm-eye, .logo:focus-visible .wm-eye { opacity: 0; }
+.logo:hover .wm-smile, .logo:focus-visible .wm-smile { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .wm-eye { animation: none; } }
 .logo svg { width: 28px; height: 28px; }
 nav ul { display: flex; gap: 22px; list-style: none; margin: 0; padding: 0; font-size: 14px; }
 nav ul a { color: var(--dim); text-decoration: none; }
@@ -117,12 +127,21 @@ footer a { color: var(--dim); text-decoration: none; }
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="wordmark" viewBox="0 0 520 200">
+    <rect x="18" y="70" width="24" height="108" rx="12" fill="currentColor"></rect>
+    <g class="wm-eye"><ellipse cx="72" cy="111" rx="36" ry="41" fill="currentColor"></ellipse><ellipse class="wm-pupil" cx="79" cy="116" rx="12" ry="18" fill="var(--bg)"></ellipse></g>
+    <g class="wm-eye"><ellipse cx="160" cy="111" rx="36" ry="41" fill="currentColor"></ellipse><ellipse class="wm-pupil" cx="167" cy="116" rx="12" ry="18" fill="var(--bg)"></ellipse></g>
+    <g class="wm-smile" fill="none" stroke="currentColor" stroke-width="22" stroke-linecap="round"><path d="M44 126 Q72 86 100 126"></path><path d="M132 126 Q160 86 188 126"></path></g>
+    <rect x="190" y="70" width="24" height="82" rx="12" fill="currentColor"></rect>
+    <text x="226" y="150" font-family="Nunito, 'Zen Maru Gothic', sans-serif" font-weight="800" font-size="150" fill="currentColor">chi</text>
+  </symbol>
+</svg>
 
 <nav>
   <div class="wrap">
     <a class="logo" href="#top" aria-label="pachi トップへ">
-      <svg viewBox="0 0 512 512" aria-hidden="true"><rect width="512" height="512" rx="110" fill="#000"/><ellipse cx="176" cy="256" rx="56" ry="90" fill="#fff"/><ellipse cx="336" cy="256" rx="56" ry="90" fill="#fff"/><ellipse cx="180" cy="266" rx="22" ry="32" fill="#000"/><ellipse cx="340" cy="266" rx="22" ry="32" fill="#000"/></svg>
-      pachi
+      <svg class="wm" viewBox="0 0 520 200" role="img" aria-label="pachi"><use href="#wordmark"></use></svg>
     </a>
     <ul>
       <li><a href="#how">使い方</a></li>
@@ -241,7 +260,7 @@ footer a { color: var(--dim); text-decoration: none; }
 
 <footer>
   <div class="wrap">
-    <span>pachi — 目だけの作業相棒</span>
+    <span style="display:flex;align-items:center;gap:10px"><svg class="wm wm-s" viewBox="0 0 520 200" role="img" aria-label="pachi"><use href="#wordmark"></use></svg>目だけの作業相棒</span>
     <span><a href="https://github.com/kotta-27/pachi">GitHub</a> ・ <a href="https://github.com/kotta-27/pachi/blob/main/CHANGELOG.md">変更履歴</a></span>
   </div>
 </footer>
