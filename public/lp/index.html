@@ -21,7 +21,7 @@
 <style>
 /* 黒いアプリと地続き。白い目だけが主役 */
 :root {
-  --bg: #000; --fg: #fff; --dim: #b4b4b4; --mute: #5a5a5a; --line: #1f1f1f; --panel: #0a0a0a;
+  --bg: #000; --fg: #fff; --dim: #c6c6c6; --mute: #6a6a6a; --line: #1f1f1f; --panel: #0a0a0a;
   --font: 'Zen Maru Gothic', 'Hiragino Maru Gothic ProN', system-ui, sans-serif;   /* 丸ゴシック: 目の丸さに合わせる */
   --latin: 'Nunito', 'Zen Maru Gothic', sans-serif;                                /* ロゴ・番号・ラベル */
   color-scheme: dark;
@@ -60,7 +60,7 @@ nav ul a:hover { color: var(--fg); }
 .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 40px; align-items: center; }
 @media (max-width: 800px) { .hero-grid { grid-template-columns: 1fr; } }
 .hero h1 { font-size: clamp(40px, 8vw, 72px); line-height: 1.1; }
-.hero p.tag { font-size: clamp(16px, 2.2vw, 20px); color: var(--dim); margin: 18px 0 28px; }
+.hero p.tag { font-size: clamp(16px, 2.2vw, 20px); color: var(--fg); opacity: .9; margin: 18px 0 28px; }
 .cta { display: inline-flex; align-items: center; justify-content: center; height: 52px; padding: 0 26px; border-radius: 26px; background: var(--fg); color: var(--bg); font-weight: 700; text-decoration: none; font-size: 16px; }
 .cta.ghost { background: transparent; color: var(--fg); border: 1px solid var(--mute); }
 .cta-row { display: flex; gap: 12px; flex-wrap: wrap; }
@@ -81,7 +81,8 @@ nav ul a:hover { color: var(--fg); }
 .phone { position: relative; width: 100%; height: 100%; border-radius: 27px; overflow: hidden; background: #000; }
 @media (max-width: 800px) { .device { transform: none; } .desk { padding: 8px 0 24px; } }
 .phone iframe { position: absolute; left: 0; top: 0; width: 844px; height: 390px; border: 0; background: #000; transform-origin: 0 0; }
-.try { text-align: center; font-size: 13px; color: var(--dim); margin: 6px 0 0; letter-spacing: .04em; }
+.try { text-align: center; font-size: 15px; color: var(--fg); margin: 4px 0 0; letter-spacing: .04em; }
+.try b { font-weight: 700; margin-right: 4px; }
 .phone .hint { position: absolute; right: 14px; bottom: 10px; font-family: var(--latin); font-weight: 800; font-size: 11px; letter-spacing: .2em; color: var(--dim); }
 .small { font-size: 14px; color: var(--dim); margin-top: 16px; }
 
@@ -178,8 +179,8 @@ footer a { color: var(--dim); text-decoration: none; }
           <span class="hint">LIVE</span>
         </div>
       </div>
-      <p class="try">触ってみて。なでる ／ 目をタップ ／ 長押し ／ 目の周りをぐるぐる</p>
     </div>
+    <p class="try"><b>触ってみて</b>　なでる ／ 目をタップ ／ 長押し ／ 目の周りをぐるぐる</p>
   </div>
 </header>
 
@@ -218,10 +219,10 @@ footer a { color: var(--dim); text-decoration: none; }
     <h2>相棒であって、タイマーではない。</h2>
     <p class="lead">数字は隅に小さく。主役はずっと目。</p>
     <ul class="feats">
-      <li><b>休憩に誘う</b><span>決めた間隔（1 分〜）で「そろそろ休憩しない？」。無視すると 3 分ごとにむっとする。</span></li>
+      <li><b>休憩に誘う</b><span>決めた間隔（1 分〜）で「そろそろ休憩しない？」。放っておくと 3 分ごとにしょんぼりして、もう一度言う。</span></li>
       <li><b>反応する</b><span>なでると目で追う。タップでウインク。連打でくすぐったがる。長押しすると、じわじわ寄ってくる。</span></li>
-      <li><b>おかえりを言う</b><span>別の画面から戻ると弾んで「おかえり」。通知を見に行ったら「大事なら見たほうがいいよ」。</span></li>
-      <li><b>節目を祝う</b><span>60 分、120 分、180 分で褒める。今日の合計は端末に残る。</span></li>
+      <li><b>おかえりを言う</b><span>別の画面から戻るとにこにこ揺れて「おかえり」。通知を見に行ったら上を見て「大事なら見たほうがいいよ」。</span></li>
+      <li><b>節目を祝う</b><span>60 分、120 分、180 分で「ほー」と感心して褒める。今日の合計は端末に残る。</span></li>
       <li><b>カメラで様子を見る（任意）</b><span>在席・暗さ・顔の位置・居眠り・あくび・笑顔に反応。映像は表示も送信もしない。</span></li>
       <li><b>途中で閉じても平気</b><span>10 分以内に戻れば「つづきから」。</span></li>
       <li><b>静か</b><span>音は既定オフ。鳴らすなら小さなチャイム。バイブも選べる。</span></li>

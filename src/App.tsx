@@ -101,6 +101,7 @@ export function App() {
 
   // ---- 知らせる（音・バイブ）----
   const notify = () => {
+    if (demo) return   // LP の埋め込みでは鳴らさない
     if (cfg.vibrate) navigator.vibrate?.([30, 60, 30])
     if (!cfg.sound) return
     try {
@@ -199,7 +200,7 @@ export function App() {
     scheduleChatter()
     nextNod.current = startAt.current + min(25)
     milestones.current.clear()
-    if (cfg.sound && !audio.current) { try { audio.current = new AudioContext() } catch { /* no audio */ } }
+    if (cfg.sound && !demo && !audio.current) { try { audio.current = new AudioContext() } catch { /* no audio */ } }
     setMode('focus'); setPhase('quiet')
     say(L.back(), { happy: true, ms: 2500 })
     started.current = true
