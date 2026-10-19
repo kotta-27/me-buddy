@@ -108,6 +108,14 @@ nav ul a:hover { color: var(--fg); }
 .step h3 { font-size: 18px; margin: 8px 0 6px; }
 .step p { margin: 0; color: var(--dim); font-size: 15px; }
 
+/* install */
+.install { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; list-style: none; margin: 0; padding: 0; }
+@media (max-width: 720px) { .install { grid-template-columns: 1fr; max-width: 360px; margin-inline: auto; } }
+.install li { display: flex; flex-direction: column; gap: 12px; }
+.install img { display: block; width: 100%; height: auto; border-radius: 22px; border: 1px solid var(--line); }
+.install span { display: flex; align-items: center; gap: 10px; font-size: 15px; }
+.install b { font-family: var(--latin); font-weight: 800; width: 26px; height: 26px; border-radius: 50%; background: var(--fg); color: var(--bg); display: inline-flex; align-items: center; justify-content: center; font-size: 13px; flex: none; }
+
 /* gestures */
 .gifs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
 @media (max-width: 720px) { .gifs { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
@@ -166,6 +174,7 @@ footer a { color: var(--dim); text-decoration: none; }
     </a>
     <ul>
       <li><a href="#how">使い方</a></li>
+      <li><a href="#install">ホーム画面に追加</a></li>
       <li><a href="#gestures">しぐさ</a></li>
       <li><a href="#features">できること</a></li>
       <li><a href="#faq">よくある質問</a></li>
@@ -316,6 +325,20 @@ footer a { color: var(--dim); text-decoration: none; }
       <div class="step"><div class="n">02</div><h3>「はじめる」</h3><p>時間を測りはじめる。目はまばたきして、視線が泳いで、ときどき勝手に何かする。画面をなでると目で追う。</p></div>
       <div class="step"><div class="n">03</div><h3>声がかかったら休む</h3><p>決めた時間がたつと、目が笑って「そろそろ休憩しない？」。休憩中は目を閉じて待っててくれる。</p></div>
     </div>
+  </div>
+</section>
+
+<section id="install">
+  <div class="wrap">
+    <div class="eyebrow">ホーム画面に追加</div>
+    <h2>アプリみたいに、全画面で。</h2>
+    <p class="lead">iPhone の Safari で開いて、3 ステップ。アドレスバーが消えて、横向きで起動する。</p>
+    <ol class="install">
+      <li><img src="img/install-1.png" alt="Safari で pachi を開いた画面。下の共有ボタンを押す" loading="lazy"><span><b>1</b>Safari で開いて、共有ボタン</span></li>
+      <li><img src="img/install-2.png" alt="共有メニュー。「ホーム画面に追加」を選ぶ" loading="lazy"><span><b>2</b>「ホーム画面に追加」</span></li>
+      <li><img src="img/install-3.png" alt="ホーム画面に追加の確認。「Webアプリとして開く」をオンにして追加" loading="lazy"><span><b>3</b>「Web アプリとして開く」をオンにして「追加」</span></li>
+    </ol>
+    <p class="small" style="text-align:center">Android は Chrome のメニューから「ホーム画面に追加」。</p>
   </div>
 </section>
 
