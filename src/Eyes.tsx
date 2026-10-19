@@ -323,10 +323,11 @@ export function Eyes({ mood, eyeSize, pace = 3, demo, onPoke, onApproach, onBuzz
     window.addEventListener('pointerdown', down)
     window.addEventListener('pointermove', move)
     window.addEventListener('touchmove', move, { passive: true })
-    window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up); window.addEventListener('touchend', up)
+    // pointercancel では解除しない（iframe 内で親ページのスクロール判定が割り込むと来る）。指が離れた時だけ
+    window.addEventListener('pointerup', up); window.addEventListener('touchend', up); window.addEventListener('touchcancel', up)
     return () => {
       window.removeEventListener('pointerdown', down); window.removeEventListener('pointermove', move); window.removeEventListener('touchmove', move)
-      window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); window.removeEventListener('touchend', up)
+      window.removeEventListener('pointerup', up); window.removeEventListener('touchend', up); window.removeEventListener('touchcancel', up)
     }
   }, [])
 
