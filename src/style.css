@@ -25,6 +25,8 @@ body {
 .stage {
   position: relative;
   height: 100%;
+  touch-action: none;           /* iOS が長押し・なでるをスクロール扱いでキャンセルしないように */
+  -webkit-touch-callout: none;
   display: flex;
   flex-direction: column;
   align-items: center;
